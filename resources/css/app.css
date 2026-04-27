@@ -1,0 +1,54 @@
+
+
+@font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter_18pt-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Inter-Medium';
+    src: url('/fonts/Inter_18pt-Medium.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Roboto Mono-Medium';
+    src: url('/fonts/RobotoMono-Medium.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Roboto Mono-Regular';
+    src: url('/fonts/RobotoMono-Regular.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Zen Antique';
+    src: url('/fonts/Zen_Antique/ZenAntique-Regular.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Mulish';
+    src: url('/fonts/Mulish/Mulish-Regular.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Mulish';
+    src: url('/fonts/Mulish/Mulish-Light.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Raleway';
+    src: url('/fonts/Raleway/Raleway-SemiBold.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'Ruberoid';
+    src: url('/fonts/Ruberoid-Medium.ttf') format('truetype');
+
+}
