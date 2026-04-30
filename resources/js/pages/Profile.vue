@@ -25,6 +25,16 @@
                             :class="{ active: activeSection === 'settings' }"
                             @click="activeSection = 'settings'"
                         >Настройки</button>
+                        
+                        <!-- Кнопка админ-панели (только для админа) -->
+                        <button 
+                            v-if="authStore.isAdmin"
+                            class="btn-admin"
+                            @click="$router.push('/admin')"
+                        >
+                            👑 Админ-панель
+                        </button>
+                        
                         <button @click="handleLogout" class="btn-logout">Выйти</button>
                     </nav>
                 </aside>
@@ -34,6 +44,10 @@
                     <!-- Профиль -->
                     <div v-if="activeSection === 'profile'" class="profile-section">
                         <h2>Мои данные</h2>
+                        
+                        <div v-if="authStore.isAdmin" class="admin-badge">
+                            👑 Администратор
+                        </div>
                         
                         <form @submit.prevent="updateProfile" class="profile-form">
                             <div class="form-grid">
@@ -85,15 +99,15 @@
                                     <span>{{ formatDate(order.created_at) }}</span>
                                 </div>
                                 <div class="order-items">
-                                    <div v-for="item in order.items" :key="item.id" class="order-item">
+                                    <div v-for="item in order.order_items" :key="item.id" class="order-item">
                                         <img :src="item.image_url" :alt="item.product_name">
                                         <span>{{ item.product_name }}</span>
                                         <span>{{ item.quantity }} шт.</span>
-                                        <span>{{ item.price.toLocaleString() }} ₽</span>
+                                        <span>{{ item.price?.toLocaleString() }} ₽</span>
                                     </div>
                                 </div>
                                 <div class="order-total">
-                                    Итого: {{ order.total_price.toLocaleString() }} ₽
+                                    Итого: {{ order.total_price?.toLocaleString() }} ₽
                                 </div>
                             </div>
                         </div>
@@ -142,6 +156,7 @@
 <script>
 import { useAuthStore } from '../stores/auth'
 import { useFavoritesStore } from '../stores/favorites'
+import { inject } from 'vue'
 import { supabase } from '../config/supabase'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ProductCard from '../components/ProductCard.vue'
@@ -149,32 +164,20 @@ import ProductCard from '../components/ProductCard.vue'
 export default {
     name: 'ProfilePage',
     components: { Breadcrumbs, ProductCard },
+    inject: ['notify'],
     data() {
         return {
             activeSection: 'profile',
             orders: [],
             profileForm: {
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                city: '',
-                address: ''
+                firstName: '', lastName: '', email: '', phone: '', city: '', address: ''
             },
-            passwordForm: {
-                newPassword: '',
-                confirmPassword: ''
-            }
+            passwordForm: { newPassword: '', confirmPassword: '' }
         }
     },
     computed: {
-        authStore() {
-            return useAuthStore()
-        },
-        favorites() {
-            const favStore = useFavoritesStore()
-            return favStore.items
-        }
+        authStore() { return useAuthStore() },
+        favorites() { return useFavoritesStore().items }
     },
     async mounted() {
         if (this.authStore.user) {
@@ -195,19 +198,14 @@ export default {
                 }
             }
         },
-        
         async loadOrders() {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('orders')
                 .select('*, order_items(*)')
                 .eq('user_id', this.authStore.user.id)
                 .order('created_at', { ascending: false })
-            
-            if (!error && data) {
-                this.orders = data
-            }
+            if (data) this.orders = data
         },
-        
         async updateProfile() {
             try {
                 await this.authStore.updateProfile({
@@ -217,47 +215,29 @@ export default {
                     city: this.profileForm.city,
                     address: this.profileForm.address
                 })
-                alert('Профиль обновлен!')
-            } catch (error) {
-                alert(error.message)
-            }
+                this.notify?.success('Сохранено!', 'Профиль обновлен')
+            } catch (error) { this.notify?.error('Ошибка', error.message) }
         },
-        
         async changePassword() {
             if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-                alert('Пароли не совпадают')
-                return
+                this.notify?.error('Ошибка', 'Пароли не совпадают'); return
             }
-            
             try {
                 await this.authStore.changePassword(this.passwordForm.newPassword)
-                alert('Пароль изменен!')
-                this.passwordForm.newPassword = ''
-                this.passwordForm.confirmPassword = ''
-            } catch (error) {
-                alert(error.message)
-            }
+                this.notify?.success('Готово!', 'Пароль изменен')
+                this.passwordForm.newPassword = ''; this.passwordForm.confirmPassword = ''
+            } catch (error) { this.notify?.error('Ошибка', error.message) }
         },
-        
         async handleLogout() {
             await this.authStore.logout()
+            this.notify?.info('До свидания!', 'Вы вышли из системы')
             this.$router.push('/')
         },
-        
         getStatusText(status) {
-            const statuses = {
-                pending: 'В обработке',
-                processing: 'Обрабатывается',
-                shipped: 'Отправлен',
-                delivered: 'Доставлен',
-                cancelled: 'Отменен'
-            }
-            return statuses[status] || status
+            const s = { pending: 'В обработке', processing: 'Обрабатывается', shipped: 'Отправлен', delivered: 'Доставлен', cancelled: 'Отменен' }
+            return s[status] || status
         },
-        
-        formatDate(date) {
-            return new Date(date).toLocaleDateString('ru-RU')
-        }
+        formatDate(date) { return new Date(date).toLocaleDateString('ru-RU') }
     }
 }
 </script>
@@ -314,9 +294,39 @@ h1 {
     color: #fff;
 }
 
+.profile-nav button:hover {
+    background: #e0e0e0;
+}
+
+.profile-nav button.active:hover {
+    background: #333;
+}
+
+.btn-admin {
+    background: #000 !important;
+    color: #fff !important;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.btn-admin:hover {
+    background: #333 !important;
+}
+
 .btn-logout {
     color: #cc0000 !important;
     margin-top: 20px;
+}
+
+.admin-badge {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 20px;
 }
 
 h2 {
@@ -359,6 +369,10 @@ h2 {
     font-size: 14px;
 }
 
+.btn-save:hover {
+    background: #333;
+}
+
 .empty {
     color: #999;
     text-align: center;
@@ -387,8 +401,27 @@ h2 {
 }
 
 .status-pending { background: #fff3cd; color: #856404; }
+.status-processing { background: #cce5ff; color: #004085; }
+.status-shipped { background: #d4edda; color: #155724; }
 .status-delivered { background: #d4edda; color: #155724; }
 .status-cancelled { background: #f8d7da; color: #721c24; }
+
+.order-items { margin: 15px 0; }
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
 
 .order-total {
     text-align: right;
@@ -398,12 +431,21 @@ h2 {
     border-top: 1px solid #eee;
 }
 
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
 @media (max-width: 768px) {
     .profile-layout {
         grid-template-columns: 1fr;
     }
     .form-grid {
         grid-template-columns: 1fr;
+    }
+    .favorites-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 </style>

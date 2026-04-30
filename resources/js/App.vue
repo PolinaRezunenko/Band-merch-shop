@@ -99,25 +99,33 @@
   <NotificationToast ref="notificationRef" />
 </div>
 
-        <Toast />
+        <NotificationToast ref="notificationRef" />
     </div>
 </template>
 
 <script>
 import { useCartStore } from './stores/cart'
 import { useAuthStore } from './stores/auth'
-import Toast from './components/NotificationToast.vue.vue'
+import { ref, onMounted, provide } from 'vue'
+import NotificationToast from './components/NotificationToast.vue'
 import BurgerMenu from './components/BurgerMenu.vue'
 import AuthModal from './components/AuthModal.vue'
 import SearchModal from './components/SearchModal.vue'
 
 export default {
     name: 'App',
-    components: {
-        Toast,
-        BurgerMenu,
-        AuthModal,
-        SearchModal
+    components: { NotificationToast, BurgerMenu, AuthModal, SearchModal },
+    setup() {
+        const notificationRef = ref(null)
+        
+        const notify = {
+            success: (title, message) => notificationRef.value?.success(title, message),
+            error: (title, message) => notificationRef.value?.error(title, message),
+            info: (title, message) => notificationRef.value?.info(title, message)
+        }
+        
+        provide('notify', notify)
+        return { notificationRef }
     },
     data() {
         return {
@@ -128,16 +136,11 @@ export default {
     computed: {
         isLightTheme() {
             const currentPath = this.$route.path
-            // Светлая шапка (прозрачный фон, белый текст) - Главная и Каталог
-            if (currentPath === '/' || currentPath.startsWith('/catalog')) {
-                return true
-            }
-            // Тёмная шапка (белый фон, черный текст) - все остальные страницы
+            if (currentPath === '/' || currentPath.startsWith('/catalog')) return true
             return false
         },
         cartCount() {
-            const cartStore = useCartStore()
-            return cartStore.totalItems
+            return useCartStore().totalItems
         }
     },
     watch: {
@@ -155,7 +158,6 @@ export default {
             }
         },
         onAuthSuccess() {
-            // После успешной авторизации можно перенаправить в профиль
             this.showAuthModal = false
             this.$router.push('/profile')
         }

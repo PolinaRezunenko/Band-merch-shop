@@ -176,60 +176,41 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, inject } from 'vue'
 import { supabase } from '../config/supabase'
 import { useAuthStore } from '../stores/auth'
-
 
 export default {
   name: 'AuthModal',
   props: {
-    isVisible: {
-      type: Boolean,
-      default: false
-    }
+    isVisible: { type: Boolean, default: false }
   },
   emits: ['close', 'success'],
   setup(props, { emit }) {
     const activeTab = ref('register')
     const authStore = useAuthStore()
+    const notify = inject('notify', {
+      success: (t, m) => alert(t + ': ' + m),
+      error: (t, m) => alert(t + ': ' + m),
+      info: (t, m) => alert(t + ': ' + m)
+    })
     
-    // Данные для регистрации
     const registerData = reactive({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: ''
+      firstName: '', lastName: '', email: '', phone: '', password: '', confirmPassword: ''
     })
     
-    // Данные для входа
-    const loginData = reactive({
-      email: '',
-      password: ''
-    })
-    
-    // Данные для восстановления пароля
+    const loginData = reactive({ email: '', password: '' })
     const forgotPasswordEmail = ref('')
     
-    // Состояния загрузки
     const registerLoading = ref(false)
     const loginLoading = ref(false)
     const forgotPasswordLoading = ref(false)
-    
-    // Видимость модальных окон
     const showForgotPassword = ref(false)
 
-    // Форматирование телефона
     const formatPhone = (event) => {
       const input = event.target
       let value = input.value.replace(/\D/g, '')
-      
-      if (value.length > 10) {
-        value = value.slice(0, 10)
-      }
-      
+      if (value.length > 10) value = value.slice(0, 10)
       let formatted = ''
       for (let i = 0; i < value.length; i++) {
         if (i === 0) formatted += '('
@@ -238,252 +219,114 @@ export default {
         if (i === 8) formatted += '-'
         formatted += value[i]
       }
-      
       input.value = formatted
       registerData.phone = formatted
     }
 
-    const closeModal = () => {
-      emit('close')
-    }
+    const closeModal = () => emit('close')
+    const openForgotPassword = () => { showForgotPassword.value = true }
+    const closeForgotPassword = () => { showForgotPassword.value = false }
 
-    const openForgotPassword = () => {
-      showForgotPassword.value = true
-    }
-
-    const closeForgotPassword = () => {
-      showForgotPassword.value = false
-    }
-
-    // Обработка регистрации
     const handleRegister = async () => {
-      // Валидация
-      if (!registerData.firstName.trim()) {
-        alert('Введите имя')
-        return
-      }
-      
-      if (!registerData.lastName.trim()) {
-        alert('Введите фамилию')
-        return
-      }
-      
-      if (!registerData.email.trim()) {
-        alert('Введите email')
-        return
-      }
-      
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(registerData.email)) {
-        alert('Введите корректный email')
-        return
-      }
-      
-      if (!registerData.password) {
-        alert('Введите пароль')
-        return
-      }
-      
-      if (registerData.password !== registerData.confirmPassword) {
-        alert('Пароли не совпадают')
-        return
-      }
-      
-      if (registerData.password.length < 6) {
-        alert('Пароль должен содержать минимум 6 символов')
-        return
-      }
+      if (!registerData.firstName.trim()) { notify.error('Ошибка', 'Введите имя'); return }
+      if (!registerData.lastName.trim()) { notify.error('Ошибка', 'Введите фамилию'); return }
+      if (!registerData.email.trim()) { notify.error('Ошибка', 'Введите email'); return }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerData.email)) { notify.error('Ошибка', 'Введите корректный email'); return }
+      if (!registerData.password) { notify.error('Ошибка', 'Введите пароль'); return }
+      if (registerData.password !== registerData.confirmPassword) { notify.error('Ошибка', 'Пароли не совпадают'); return }
+      if (registerData.password.length < 6) { notify.error('Ошибка', 'Пароль минимум 6 символов'); return }
       
       registerLoading.value = true
-      
       try {
-        console.log('Начинаем регистрацию...', registerData.email)
-        
         const { data, error } = await supabase.auth.signUp({
           email: registerData.email,
           password: registerData.password,
-          options: {
-            data: {
-              first_name: registerData.firstName,
-              last_name: registerData.lastName,
-              phone: registerData.phone
-            }
-          }
+          options: { data: { first_name: registerData.firstName, last_name: registerData.lastName, phone: registerData.phone } }
         })
         
         if (error) {
-          console.error('Ошибка supabase:', error)
-          
-          // Если ошибка лимита писем
           if (error.message.includes('rate limit') || error.status === 429) {
-            alert('Превышен лимит отправки писем. Попробуйте позже или используйте другой email.')
-            return
+            notify.error('Лимит превышен', 'Попробуйте позже или другой email'); return
           }
-          
           throw error
         }
         
-        console.log('Ответ регистрации:', data)
-        
-        // Создаем профиль
         if (data.user) {
-          try {
-            const { error: profileError } = await supabase
-              .from('profiles')
-              .insert({
-                id: data.user.id,
-                first_name: registerData.firstName,
-                last_name: registerData.lastName,
-                phone: registerData.phone
-              })
-            
-            if (profileError) {
-              console.error('Ошибка создания профиля:', profileError)
-            } else {
-              console.log('Профиль создан успешно')
-            }
-          } catch (profileErr) {
-            console.error('Ошибка при создании профиля:', profileErr)
-          }
+          await supabase.from('profiles').insert({
+            id: data.user.id, first_name: registerData.firstName, last_name: registerData.lastName, phone: registerData.phone
+          })
         }
         
-        // Проверяем сессию
         if (data.session) {
-          // Пользователь сразу авторизован (email подтверждение отключено)
-          console.log('Пользователь авторизован сразу')
           authStore.user = data.user
           await authStore.loadProfile()
+          notify.success('Добро пожаловать!', 'Регистрация успешна')
           emit('success')
           closeModal()
         } else {
-          // Нужно подтверждение email
-          console.log('Требуется подтверждение email')
-          alert('Регистрация успешна! Теперь вы можете войти.')
+          notify.success('Регистрация успешна!', 'Теперь вы можете войти')
           activeTab.value = 'login'
         }
         
-        // Очищаем форму
-        Object.keys(registerData).forEach(key => {
-          registerData[key] = ''
-        })
-        
+        Object.keys(registerData).forEach(key => registerData[key] = '')
       } catch (error) {
-        console.error('Ошибка регистрации:', error)
-        alert(error.message || 'Произошла ошибка при регистрации')
+        notify.error('Ошибка регистрации', error.message || 'Попробуйте еще раз')
       } finally {
         registerLoading.value = false
       }
     }
 
-    // Обработка входа
     const handleLogin = async () => {
-      if (!loginData.email || !loginData.password) {
-        alert('Заполните все поля')
-        return
-      }
+      if (!loginData.email || !loginData.password) { notify.error('Ошибка', 'Заполните все поля'); return }
       
       loginLoading.value = true
-      
       try {
-        console.log('Попытка входа...', loginData.email)
-        
         const { data, error } = await supabase.auth.signInWithPassword({
-          email: loginData.email,
-          password: loginData.password
+          email: loginData.email, password: loginData.password
         })
         
         if (error) throw error
         
-        console.log('Вход успешен:', data)
-        
-        // Обновляем состояние пользователя
         authStore.user = data.user
         await authStore.loadProfile()
         
+        notify.success('Добро пожаловать!', 'Вы успешно вошли')
         emit('success')
         closeModal()
         
-        // Очищаем форму
-        loginData.email = ''
-        loginData.password = ''
-        
+        loginData.email = ''; loginData.password = ''
       } catch (error) {
-        console.error('Ошибка входа:', error)
-        
-        if (error.message.includes('Email not confirmed')) {
-          alert('Email не подтвержден. Проверьте почту или обратитесь к администратору.')
-        } else if (error.message.includes('Invalid login credentials')) {
-          alert('Неверный email или пароль')
+        if (error.message.includes('Invalid login credentials')) {
+          notify.error('Ошибка входа', 'Неверный email или пароль')
         } else {
-          alert(error.message || 'Произошла ошибка при входе')
+          notify.error('Ошибка', error.message)
         }
       } finally {
         loginLoading.value = false
       }
     }
 
-    // Восстановление пароля
     const handleForgotPassword = async () => {
-      if (!forgotPasswordEmail.value) {
-        alert('Введите email')
-        return
-      }
-      
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(forgotPasswordEmail.value)) {
-        alert('Введите корректный email')
-        return
-      }
-      
+      if (!forgotPasswordEmail.value) { notify.error('Ошибка', 'Введите email'); return }
       forgotPasswordLoading.value = true
-      
       try {
-        console.log('Отправка восстановления пароля...', forgotPasswordEmail.value)
-        
-        const { error } = await supabase.auth.resetPasswordForEmail(
-          forgotPasswordEmail.value,
-          {
-            redirectTo: window.location.origin + '/reset-password'
-          }
-        )
-        
-        if (error) {
-          if (error.message.includes('rate limit') || error.status === 429) {
-            alert('Превышен лимит отправки писем. Попробуйте позже.')
-            return
-          }
-          throw error
-        }
-        
-        alert('Инструкция по восстановлению пароля отправлена на ваш email')
-        
+        const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail.value)
+        if (error) throw error
+        notify.success('Готово!', 'Инструкция отправлена на email')
         closeForgotPassword()
         forgotPasswordEmail.value = ''
-        
       } catch (error) {
-        console.error('Ошибка восстановления пароля:', error)
-        alert(error.message || 'Произошла ошибка')
+        notify.error('Ошибка', error.message || 'Попробуйте позже')
       } finally {
         forgotPasswordLoading.value = false
       }
     }
 
     return {
-      activeTab,
-      registerData,
-      loginData,
-      forgotPasswordEmail,
-      registerLoading,
-      loginLoading,
-      forgotPasswordLoading,
-      showForgotPassword,
-      closeModal,
-      openForgotPassword,
-      closeForgotPassword,
-      formatPhone,
-      handleRegister,
-      handleLogin,
-      handleForgotPassword
+      activeTab, registerData, loginData, forgotPasswordEmail,
+      registerLoading, loginLoading, forgotPasswordLoading, showForgotPassword,
+      closeModal, openForgotPassword, closeForgotPassword, formatPhone,
+      handleRegister, handleLogin, handleForgotPassword
     }
   }
 }

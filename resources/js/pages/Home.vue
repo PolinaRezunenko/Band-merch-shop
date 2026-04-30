@@ -35,26 +35,26 @@
         <!-- Две большие карточки слева (рядом) -->
         <div class="categories-left">
             <router-link to="/catalog/t-shirts" class="category-card category-card-large">
-                <img src="/images/categories/t-shirts.jpg" alt="Футболки">
+                <img src="/images/categories/t-shirts.png" alt="Футболки">
                 <span>Футболки</span>
             </router-link>
             <router-link to="/catalog/hoodies" class="category-card category-card-large">
-                <img src="/images/categories/hoodies.jpg" alt="Худи">
+                <img src="/images/categories/hoodies.png" alt="Худи">
                 <span>Худи</span>
             </router-link>
         </div>
         <!-- Три маленькие карточки справа (колонка) -->
         <div class="categories-right">
             <router-link to="/catalog/accessories" class="category-card category-card-small">
-                <img src="/images/categories/accessories.jpg" alt="Аксессуары">
+                <img src="/images/categories/accessories.png" alt="Аксессуары">
                 <span>Аксессуары</span>
             </router-link>
             <router-link to="/catalog/vinyl" class="category-card category-card-small">
-                <img src="/images/categories/vinyl.jpg" alt="Винил">
+                <img src="/images/categories/vinyl.png" alt="Винил">
                 <span>Винил</span>
             </router-link>
             <router-link to="/catalog/cd" class="category-card category-card-small">
-                <img src="/images/categories/cd.jpg" alt="CD-диски">
+                <img src="/images/categories/cd.png" alt="CD-диски">
                 <span>CD-диски</span>
             </router-link>
         </div>

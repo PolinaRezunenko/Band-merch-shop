@@ -28,45 +28,37 @@
 <script>
 import { ref } from 'vue'
 
-// ГЛОБАЛЬНОЕ СОСТОЯНИЕ
 const notifications = ref([])
 let idCounter = 0
 
-export function useToast() {
-    const remove = (id) => {
-        const index = notifications.value.findIndex(n => n.id === id)
-        if (index !== -1) notifications.value.splice(index, 1)
-    }
-
-    const show = (options) => {
-        const id = ++idCounter
-        notifications.value.unshift({
-            id,
-            type: options.type || 'success',
-            title: options.title || '',
-            message: options.message || '',
-            duration: options.duration || 4000
-        })
-        if (options.duration !== 0) {
-            setTimeout(() => remove(id), options.duration || 4000)
-        }
-    }
-
-    const success = (title, message) => show({ type: 'success', title, message })
-    const error = (title, message) => show({ type: 'error', title, message })
-    const info = (title, message) => show({ type: 'info', title, message })
-
-    return { success, error, info, show, remove }
-}
-
 export default {
-    name: 'ToastNotification',
+    name: 'NotificationToast',
     setup() {
         const remove = (id) => {
             const index = notifications.value.findIndex(n => n.id === id)
             if (index !== -1) notifications.value.splice(index, 1)
         }
-        return { notifications, remove }
+
+        const show = (options) => {
+            const id = ++idCounter
+            notifications.value.unshift({
+                id,
+                type: options.type || 'success',
+                title: options.title || '',
+                message: options.message || '',
+                duration: options.duration || 4000
+            })
+            if (options.duration !== 0) {
+                setTimeout(() => remove(id), options.duration || 4000)
+            }
+        }
+
+        const success = (title, message) => show({ type: 'success', title, message })
+        const error = (title, message) => show({ type: 'error', title, message })
+        const info = (title, message) => show({ type: 'info', title, message })
+
+        // ВАЖНО! Экспортируем методы для ref
+        return { notifications, remove, success, error, info }
     }
 }
 </script>
