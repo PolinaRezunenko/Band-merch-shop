@@ -1,3 +1,77 @@
+# 🛒 Band Merch Shop
+
+Интернет-магазин брендированной продукции музыкальной группы 
+
+## 📋 Описание
+
+Веб-приложение для продажи официального мерча музыкальной группы: футболки, худи, свитшоты, аксессуары, виниловые пластинки и CD-диски.
+
+**Дипломный проект** по специальности 09.02.07 «Информационные системы и программирование».
+
+## 🛠 Технологии
+
+- **Бэкенд:** Laravel 11
+- **Фронтенд:** Vue 3 + Vue Router
+- **Стейт-менеджер:** Pinia
+- **База данных:** Supabase (PostgreSQL)
+- **Стили:** CSS (scoped)
+- **Сборка:** Vite
+
+## 🚀 Установка и запуск
+
+### 1. Клонирование репозитория
+
+git clone https://github.com/PolinaRezunenko/Band-merch-shop.git
+cd Band-merch-shop
+2. Установка PHP-зависимостей
+
+composer install
+3. Установка JavaScript-зависимостей
+
+npm install
+4. Настройка окружения
+
+cp .env.example .env
+php artisan key:generate
+Отредактируйте файл .env, указав данные Supabase:
+
+env
+
+VITE_SUPABASE_URL=https://uxtjoywjdihkxqzjhsgg.supabase.co
+VITE_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4dGpveXdqZGloa3hxempoc2dnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5ODQ4NDYsImV4cCI6MjA5MjU2MDg0Nn0.02FTUOBjfy8uxO-NGlEJpZc9kbxyFSDEADF6Oe4gXck
+
+5. Сборка и запуск
+
+# Для разработки:
+npm run dev
+
+# Для продакшена:
+npm run build
+
+# Запуск сервера:
+php artisan serve
+Сайт доступен: http://127.0.0.1:8000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
