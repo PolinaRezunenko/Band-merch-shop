@@ -32,7 +32,7 @@
                             class="btn-admin"
                             @click="$router.push('/admin')"
                         >
-                            👑 Админ-панель
+                             Админ-панель
                         </button>
                         
                         <button @click="handleLogout" class="btn-logout">Выйти</button>
@@ -46,7 +46,7 @@
                         <h2>Мои данные</h2>
                         
                         <div v-if="authStore.isAdmin" class="admin-badge">
-                            👑 Администратор
+                            Администратор
                         </div>
                         
                         <form @submit.prevent="updateProfile" class="profile-form">
@@ -255,7 +255,7 @@ export default {
 }
 
 h1 {
-    font-family: 'Zen Antique', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 36px;
     margin: 30px 0;
 }

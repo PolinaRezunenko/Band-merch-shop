@@ -1,14 +1,14 @@
-# 🛒 Band Merch Shop
+#  Band Merch Shop
 
 Интернет-магазин брендированной продукции музыкальной группы 
 
-## 📋 Описание
+## Описание
 
 Веб-приложение для продажи официального мерча музыкальной группы: футболки, худи, свитшоты, аксессуары, виниловые пластинки и CD-диски.
 
 **Дипломный проект** по специальности 09.02.07 «Информационные системы и программирование».
 
-## 🛠 Технологии
+##  Технологии
 
 - **Бэкенд:** Laravel 11
 - **Фронтенд:** Vue 3 + Vue Router
@@ -17,23 +17,23 @@
 - **Стили:** CSS (scoped)
 - **Сборка:** Vite
 
-## 🚀 Установка и запуск
+##  Установка и запуск
 
 ### 1. Клонирование репозитория
 
-git clone https://github.com/PolinaRezunenko/Band-merch-shop.git
-cd Band-merch-shop
+#### git clone https://github.com/PolinaRezunenko/Band-merch-shop.git
+#### cd Band-merch-shop
 ### 2. Установка PHP-зависимостей
 
-composer install
+#### composer install
 ### 3. Установка JavaScript-зависимостей
 
-npm install
+#### npm install
 ### 4. Настройка окружения
 
-cp .env.example .env
-php artisan key:generate
-Отредактируйте файл .env, указав данные Supabase:
+#### cp .env.example .env
+#### php artisan key:generate
+#### Отредактируйте файл .env, указав данные Supabase:
 
 env
 
@@ -49,8 +49,13 @@ npm run dev
 npm run build
 
 # Запуск сервера:
-php artisan serve
-Сайт доступен: http://127.0.0.1:8000
+#### php artisan serve
+#### Сайт доступен: http://127.0.0.1:8000
+
+
+# Логин и пароль для админа:
+#### p1234567r098@gmail.com
+#### 1234567
 
 
 
