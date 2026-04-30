@@ -23,13 +23,13 @@
 
 git clone https://github.com/PolinaRezunenko/Band-merch-shop.git
 cd Band-merch-shop
-2. Установка PHP-зависимостей
+### 2. Установка PHP-зависимостей
 
 composer install
-3. Установка JavaScript-зависимостей
+### 3. Установка JavaScript-зависимостей
 
 npm install
-4. Настройка окружения
+### 4. Настройка окружения
 
 cp .env.example .env
 php artisan key:generate
@@ -40,7 +40,7 @@ env
 VITE_SUPABASE_URL=https://uxtjoywjdihkxqzjhsgg.supabase.co
 VITE_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4dGpveXdqZGloa3hxempoc2dnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5ODQ4NDYsImV4cCI6MjA5MjU2MDg0Nn0.02FTUOBjfy8uxO-NGlEJpZc9kbxyFSDEADF6Oe4gXck
 
-5. Сборка и запуск
+### 5. Сборка и запуск
 
 # Для разработки:
 npm run dev
