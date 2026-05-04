@@ -120,7 +120,7 @@ export default {
 .cart-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    /* padding: 40px 20px; */
 }
 
 .cart-title {

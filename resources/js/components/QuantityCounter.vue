@@ -65,7 +65,7 @@ export default {
 .quantity-counter span {
     width: 50px;
     text-align: center;
-    color: #fff;
+    color: #000000;
     font-weight: 600;
     font-size: 1rem;
     user-select: none;

@@ -1,6 +1,8 @@
 <template>
     <div class="page">
         <div class="container">
+                        <!-- Хлебные крошки -->
+            <Breadcrumbs :items="breadcrumbs" />
             <h1>Избранное</h1>
             <div class="products-grid" v-if="favStore.items.length > 0">
                 <ProductCard 
@@ -18,15 +20,21 @@
 <script>
 import { useFavoritesStore } from '../stores/favorites'
 import { inject } from 'vue'
+import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ProductCard from '../components/ProductCard.vue'
 import DiscountBanner from '../components/DiscountBanner.vue'
 
+
 export default {
     name: 'FavoritesPage',
-    components: { ProductCard, DiscountBanner },
+    components: { Breadcrumbs, ProductCard, DiscountBanner },
     inject: ['notify'],
     data() {
         return { favStore: useFavoritesStore() }
+    },
+    computed: {
+        
+        breadcrumbs() { return [{ label: 'Избранное', link: null }] }
     },
     methods: {
         toggleFavorite(product) {
