@@ -124,11 +124,11 @@ export default {
 }
 
 .cart-title {
-    font-family: 'Zen Antique', serif;
-    font-size: 36px;
+    font-family: 'Raleway', sans-serif; 
     color: #000;
     margin: 30px 0;
-    text-transform: uppercase;
+    font-size: 48px;
+
 }
 
 .cart-layout {
@@ -253,8 +253,7 @@ export default {
     text-decoration: none;
     border-radius: 4px;
     font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
+    font-weight: 400;
     letter-spacing: 1px;
     font-family: 'Inter', sans-serif;
     transition: background 0.3s;

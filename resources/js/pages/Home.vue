@@ -111,10 +111,84 @@ export default {
     position: relative;
 }
 
-.hero-content {
+/* .hero-content {
     position: relative;
     z-index: 1;
     padding: 286px 542px 171px 120px;
+} */
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 286px 20px 171px 0px;
+}
+
+/* 1920px */
+@media (min-width: 1920px) {
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 286px 20px 171px 0px;
+    }
+}
+
+/* 1440px */
+@media (min-width: 1440px) and (max-width: 1919px) {
+    .hero-content {
+        max-width: 1200px;
+        padding: 286px 20px 171px 0px;
+    }
+}
+
+/* 1200px */
+@media (min-width: 1200px) and (max-width: 1439px) {
+    .hero-content {
+        max-width: 960px;
+        padding: 250px 20px 150px 0px;
+    }
+}
+
+/* 1024px */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .hero-content {
+        max-width: 800px;
+        padding: 220px 20px 130px 0px;
+    }
+    .hero { height: 600px; }
+    .hero-title { font-size: 52px; }
+}
+
+/* 768px */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hero-content {
+        max-width: 700px;
+        padding: 200px 20px 120px 30px;
+    }
+    .hero { height: 500px; }
+    .hero-title { font-size: 42px; }
+}
+
+/* 480px */
+@media (min-width: 480px) and (max-width: 767px) {
+    .hero-content {
+        max-width: 100%;
+        padding: 180px 30px 100px 30px;
+    }
+    .hero { height: 450px; }
+    .hero-title { font-size: 32px; }
+}
+
+/* 320px */
+@media (max-width: 479px) {
+    .hero-content {
+        max-width: 100%;
+        padding: 160px 20px 80px 20px;
+    }
+    .hero { height: 400px; }
+    .hero-title { font-size: 26px; }
 }
 
 
@@ -132,7 +206,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
-    width: 1440px;
+    width: 100vw;
     height: 80px;
     background: #fff;
     border-radius: 51px;

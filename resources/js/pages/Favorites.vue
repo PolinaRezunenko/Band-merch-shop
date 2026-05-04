@@ -54,11 +54,12 @@ export default {
 .page { background: #fff; min-height: 100vh; }
 .container { max-width: 1200px; margin: 0 auto;  }
 .container h1 { 
-    font-family: 'Zen Antique', serif; 
+    font-family: 'Raleway', sans-serif; 
     color: #0a0a0a; 
-    margin-bottom: 32px; 
-    font-size: 32px; 
-    text-transform: uppercase;
+    margin-top: 30px;
+    margin-bottom: 30px; 
+    font-size: 48px; 
+
 }
 .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .empty { color: #999; text-align: center; padding: 64px; font-size: 18px; }

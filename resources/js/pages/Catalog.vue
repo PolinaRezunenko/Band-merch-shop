@@ -349,7 +349,7 @@ export default {
     bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 1440px;
+    min-width: 100vw;
     max-width: 90%;
     height: 80px;
     background: #fff;
@@ -586,6 +586,64 @@ export default {
     .catalog-hero-content {
         padding-left: 20px;
         padding-bottom: 20px;
+    }
+}
+
+/* 1920px */
+@media (min-width: 1920px) {
+    .hero-divider {
+        width: 1920px;
+    }
+}
+
+/* 1440px */
+@media (min-width: 1440px) and (max-width: 1919px) {
+    .hero-divider {
+        width: 1920px;
+    }
+}
+
+/* 1200px */
+@media (min-width: 1200px) and (max-width: 1439px) {
+    .hero-divider {
+        width: 900px;
+    }
+}
+
+/* 1024px (планшеты горизонтально) */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .hero-divider {
+        width: 760px;
+    }
+}
+
+/* 768px (планшеты вертикально) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hero-divider {
+        width: 90%;
+        height: 60px;
+        bottom: -30px;
+        border-radius: 40px;
+    }
+}
+
+/* 480px (большие телефоны) */
+@media (min-width: 480px) and (max-width: 767px) {
+    .hero-divider {
+        width: 92%;
+        height: 50px;
+        bottom: -25px;
+        border-radius: 30px;
+    }
+}
+
+/* 320px (маленькие телефоны) */
+@media (max-width: 479px) {
+    .hero-divider {
+        width: 94%;
+        height: 40px;
+        bottom: -20px;
+        border-radius: 25px;
     }
 }
 </style>

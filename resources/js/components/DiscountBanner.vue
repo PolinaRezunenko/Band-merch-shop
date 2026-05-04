@@ -13,15 +13,20 @@
 </template>
 
 <script>
+import { inject } from 'vue'
+
 export default {
     name: 'DiscountBanner',
+    inject: ['notify'],
     data() {
         return { email: '' }
     },
     methods: {
         subscribe() {
-            alert('Спасибо за подписку!')
-            this.email = ''
+            if (this.email.trim()) {
+                if (this.notify) this.notify.success('Подписка оформлена!', 'Скидка 7% будет отправлена на ваш email')
+                this.email = ''
+            }
         }
     }
 }

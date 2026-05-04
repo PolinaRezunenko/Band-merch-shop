@@ -56,9 +56,11 @@
 <script>
 import { useCartStore } from '../stores/cart'
 import { useFavoritesStore } from '../stores/favorites'
+import { inject } from 'vue'
 
 export default {
     name: 'ProductCard',
+    inject: ['notify'],
     props: {
         product: {
             type: Object,
@@ -100,6 +102,7 @@ export default {
             this.quantity++
             const cartStore = useCartStore()
             cartStore.addToCart(this.product, this.selectedSize)
+            if (this.notify) this.notify.success('Добавлено в корзину!', this.product.name)
         },
         decreaseQuantity() {
             if (this.quantity > 0) {
@@ -107,6 +110,7 @@ export default {
                 const cartStore = useCartStore()
                 if (this.quantity === 0) {
                     cartStore.removeFromCart(this.product.id, this.selectedSize)
+                    if (this.notify) this.notify.info('Удалено', 'Товар удален из корзины')
                 } else {
                     cartStore.updateQuantity(this.product.id, this.selectedSize, this.quantity)
                 }
@@ -118,9 +122,9 @@ export default {
             this.isFavorite = favStore.isFavorite(this.product.id)  
             
             if (this.isFavorite) {
-                alert('Товар добавлен в избранное ❤️')
+                if (this.notify) this.notify.success('В избранном!', this.product.name)
             } else {
-                alert('Товар удалён из избранного')
+                if (this.notify) this.notify.info('Удалено', 'Товар удален из избранного')
             }
         }
     }

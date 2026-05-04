@@ -156,7 +156,6 @@
 <script>
 import { useAuthStore } from '../stores/auth'
 import { useFavoritesStore } from '../stores/favorites'
-import { inject } from 'vue'
 import { supabase } from '../config/supabase'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ProductCard from '../components/ProductCard.vue'
@@ -167,11 +166,8 @@ export default {
     inject: ['notify'],
     data() {
         return {
-            activeSection: 'profile',
-            orders: [],
-            profileForm: {
-                firstName: '', lastName: '', email: '', phone: '', city: '', address: ''
-            },
+            activeSection: 'profile', orders: [],
+            profileForm: { firstName: '', lastName: '', email: '', phone: '', city: '', address: '' },
             passwordForm: { newPassword: '', confirmPassword: '' }
         }
     },
@@ -180,10 +176,7 @@ export default {
         favorites() { return useFavoritesStore().items }
     },
     async mounted() {
-        if (this.authStore.user) {
-            await this.loadProfileData()
-            await this.loadOrders()
-        }
+        if (this.authStore.user) { await this.loadProfileData(); await this.loadOrders() }
     },
     methods: {
         async loadProfileData() {
@@ -199,38 +192,32 @@ export default {
             }
         },
         async loadOrders() {
-            const { data } = await supabase
-                .from('orders')
-                .select('*, order_items(*)')
-                .eq('user_id', this.authStore.user.id)
-                .order('created_at', { ascending: false })
+            const { data } = await supabase.from('orders').select('*, order_items(*)')
+                .eq('user_id', this.authStore.user.id).order('created_at', { ascending: false })
             if (data) this.orders = data
         },
         async updateProfile() {
             try {
                 await this.authStore.updateProfile({
-                    first_name: this.profileForm.firstName,
-                    last_name: this.profileForm.lastName,
-                    phone: this.profileForm.phone,
-                    city: this.profileForm.city,
-                    address: this.profileForm.address
+                    first_name: this.profileForm.firstName, last_name: this.profileForm.lastName,
+                    phone: this.profileForm.phone, city: this.profileForm.city, address: this.profileForm.address
                 })
-                this.notify?.success('Сохранено!', 'Профиль обновлен')
-            } catch (error) { this.notify?.error('Ошибка', error.message) }
+                if (this.notify) this.notify.success('Сохранено!', 'Профиль обновлен')
+            } catch (error) { if (this.notify) this.notify.error('Ошибка', error.message) }
         },
         async changePassword() {
             if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-                this.notify?.error('Ошибка', 'Пароли не совпадают'); return
+                if (this.notify) this.notify.error('Ошибка', 'Пароли не совпадают'); return
             }
             try {
                 await this.authStore.changePassword(this.passwordForm.newPassword)
-                this.notify?.success('Готово!', 'Пароль изменен')
+                if (this.notify) this.notify.success('Готово!', 'Пароль изменен')
                 this.passwordForm.newPassword = ''; this.passwordForm.confirmPassword = ''
-            } catch (error) { this.notify?.error('Ошибка', error.message) }
+            } catch (error) { if (this.notify) this.notify.error('Ошибка', error.message) }
         },
         async handleLogout() {
             await this.authStore.logout()
-            this.notify?.info('До свидания!', 'Вы вышли из системы')
+            if (this.notify) this.notify.info('До свидания!', 'Вы вышли из системы')
             this.$router.push('/')
         },
         getStatusText(status) {
@@ -251,13 +238,14 @@ export default {
 .profile-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    /* padding: 40px 20px; */
 }
 
 h1 {
-    font-family: 'Inter', sans-serif;
-    font-size: 36px;
+    font-family: 'Raleway', sans-serif; 
+    color: #0a0a0a; 
     margin: 30px 0;
+    font-size: 48px;
 }
 
 .profile-layout {

@@ -121,6 +121,7 @@ import DiscountBanner from '../components/DiscountBanner.vue'
 export default {
     name: 'CheckoutPage',
     components: { Breadcrumbs, CartItem, PopularProducts, DiscountBanner },
+    inject: ['notify'],
     data() {
         return {
             coupon: '',
@@ -128,51 +129,31 @@ export default {
             submitLoading: false,
             error: '',
             form: {
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                city: '',
-                address: '',
-                payment: 'card',
-                delivery: '',
-                comment: ''
+                firstName: '', lastName: '', email: '', phone: '',
+                city: '', address: '', payment: 'card', delivery: '', comment: ''
             }
         }
     },
     computed: {
-        cartItems() {
-            return useCartStore().items
-        },
-        totalPrice() {
-            return useCartStore().totalPrice
-        },
-        breadcrumbs() {
-            return [
-                { label: 'Корзина', link: '/cart' },
-                { label: 'Оформление заказа', link: null }
-            ]
-        }
+        cartItems() { return useCartStore().items },
+        totalPrice() { return useCartStore().totalPrice },
+        breadcrumbs() { return [{ label: 'Корзина', link: '/cart' }, { label: 'Оформление заказа', link: null }] }
     },
     methods: {
-        removeItem(productId, size) {
-            useCartStore().removeFromCart(productId, size)
-        },
-        updateQuantity({ id, size, quantity }) {
-            useCartStore().updateQuantity(id, size, quantity)
-        },
+        removeItem(productId, size) { useCartStore().removeFromCart(productId, size) },
+        updateQuantity({ id, size, quantity }) { useCartStore().updateQuantity(id, size, quantity) },
         clearCart() {
             if (confirm('Очистить корзину?')) {
                 useCartStore().clearCart()
+                if (this.notify) this.notify.info('Корзина очищена', 'Все товары удалены')
             }
         },
         applyCoupon() {
             if (this.coupon.trim()) {
                 this.discount = 500
-                alert('Купон применён!')
+                if (this.notify) this.notify.success('Купон применён!', 'Скидка 500 ₽')
             }
         },
-        
         async submitOrder() {
             this.error = ''
             
@@ -182,91 +163,55 @@ export default {
             if (!this.form.delivery) { this.error = 'Выберите доставку'; return }
             
             this.submitLoading = true
-            
             try {
                 const cartStore = useCartStore()
                 const authStore = useAuthStore()
-                
                 let userId = authStore.user?.id || null
                 
-                // Авторегистрация если не авторизован
                 if (!userId) {
                     const password = 'Pass' + Math.random().toString(36).slice(-8) + '!'
-                    
                     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                        email: this.form.email,
-                        password: password
+                        email: this.form.email, password: password
                     })
-                    
                     if (signUpError) {
                         if (signUpError.message.includes('already')) {
                             this.error = 'Этот email уже зарегистрирован. Войдите в аккаунт.'
-                            this.submitLoading = false
-                            return
+                            this.submitLoading = false; return
                         }
                         throw signUpError
                     }
-                    
                     if (signUpData.user) {
                         userId = signUpData.user.id
-                        
-                        // Профиль
                         await supabase.from('profiles').insert({
-                            id: userId,
-                            first_name: this.form.firstName,
-                            last_name: this.form.lastName,
-                            phone: this.form.phone,
-                            city: this.form.city,
-                            address: this.form.address
+                            id: userId, first_name: this.form.firstName, last_name: this.form.lastName,
+                            phone: this.form.phone, city: this.form.city, address: this.form.address
                         })
-                        
-                        // Авторизуем
                         authStore.user = signUpData.user
                         await authStore.loadProfile()
+                        if (this.notify) this.notify.success('Аккаунт создан!', 'Данные отправлены на email')
                     }
                 }
                 
-                // Создаем заказ
-                const { data: order, error: orderError } = await supabase
-                    .from('orders')
-                    .insert({
-                        user_id: userId,
-                        status: 'pending',
-                        total_price: cartStore.totalPrice - this.discount,
-                        discount: this.discount,
-                        payment_method: this.form.payment,
-                        delivery_method: this.form.delivery,
-                        first_name: this.form.firstName,
-                        last_name: this.form.lastName,
-                        email: this.form.email,
-                        phone: this.form.phone,
-                        city: this.form.city,
-                        address: this.form.address,
-                        comment: this.form.comment
-                    })
-                    .select('id')
-                    .single()
+                const { data: order, error: orderError } = await supabase.from('orders').insert({
+                    user_id: userId, status: 'pending', total_price: cartStore.totalPrice - this.discount,
+                    discount: this.discount, payment_method: this.form.payment, delivery_method: this.form.delivery,
+                    first_name: this.form.firstName, last_name: this.form.lastName, email: this.form.email,
+                    phone: this.form.phone, city: this.form.city, address: this.form.address, comment: this.form.comment
+                }).select('id').single()
                 
                 if (orderError) throw orderError
                 
-                // Товары
                 const items = cartStore.items.map(item => ({
-                    order_id: order.id,
-                    product_id: item.id,
-                    product_name: item.name,
-                    quantity: item.quantity,
-                    size: item.selectedSize,
-                    price: item.price,
-                    image_url: item.image_url
+                    order_id: order.id, product_id: item.id, product_name: item.name,
+                    quantity: item.quantity, size: item.selectedSize, price: item.price, image_url: item.image_url
                 }))
-                
                 await supabase.from('order_items').insert(items)
                 
                 cartStore.clearCart()
                 
-                alert(`Заказ №${order.id} оформлен!`)
-                this.$router.push('/profile')
+                if (this.notify) this.notify.success('Заказ оформлен!', `Номер: #${order.id}`)
                 
+                setTimeout(() => this.$router.push('/profile'), 2000)
             } catch (err) {
                 console.error('Ошибка:', err)
                 this.error = err.message || 'Ошибка оформления'
@@ -280,8 +225,10 @@ export default {
 
 <style scoped>
 .checkout-page { background: #fff; min-height: 100vh; }
-.checkout-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-.checkout-title { font-family: 'Zen Antique', serif; font-size: 36px; color: #000; margin: 30px 0; text-transform: uppercase; }
+.checkout-container { max-width: 1200px; margin: 0 auto; 
+    /* padding: 40px 20px;*/ } 
+.checkout-title {     font-family: 'Raleway', sans-serif; 
+     font-size: 48px; color: #000; margin: 30px 0;  }
 
 .cart-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; margin-bottom: 60px; }
 .cart-header { display: flex; justify-content: flex-end; margin-bottom: 20px; }
@@ -299,10 +246,10 @@ export default {
 .btn-to-catalog { display: inline-block; margin-top: 20px; padding: 14px 40px; background: #000; color: #fff; text-decoration: none; border-radius: 4px; }
 
 .checkout-form { margin-top: 60px; border-top: 2px solid #000; padding-top: 40px; }
-.form-title { font-family: 'Zen Antique', serif; font-size: 32px; margin-bottom: 40px; }
+.form-title { font-family: 'Raleway', sans-serif; font-size: 32px; margin-bottom: 40px; }
 .error-message { background: #ffe6e6; color: #cc0000; padding: 15px; border-radius: 4px; margin-bottom: 30px; }
 .form-section { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #eee; }
-.form-section h3 { font-family: 'Inter', sans-serif; font-size: 20px; margin-bottom: 20px; font-weight: 600; }
+.form-section h3 { font-family: 'Mulish-regular', sans-serif; font-size: 20px; margin-bottom: 20px; font-weight: 600; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-group label { font-size: 14px; color: #666; }
@@ -311,7 +258,7 @@ export default {
 .radio-label { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 15px; }
 .radio-label input[type="radio"] { width: 20px; height: 20px; accent-color: #000; }
 .comment-input { width: 100%; padding: 14px 16px; border: 1px solid #ddd; border-radius: 4px; resize: vertical; }
-.btn-submit { width: 100%; padding: 18px; background: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; text-transform: uppercase; cursor: pointer; margin-top: 20px; }
+.btn-submit { font-family: 'Mulish-regular', sans-serif; font-size: 16px; width: 100%; padding: 18px; background: #000; color: #fff; border: none; border-radius: 4px;  font-weight: 400;  cursor: pointer; margin-top: 20px; }
 .btn-submit:hover { background: #333; }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
