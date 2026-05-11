@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+
 
 const routes = [
     {
@@ -85,8 +87,24 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: () => import('../pages/AdminPanel.vue')
-}
+},
 
+{
+    path: '/new',
+    name: 'NewProducts',
+    component: () => import('../pages/NewProducts.vue')
+},
+{
+        path: '/forbidden',
+        name: 'Forbidden',
+        component: () => import('../pages/Forbidden.vue')
+    },
+
+{
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../pages/NotFound.vue')
+}
     
 ]
 
@@ -96,6 +114,19 @@ const router = createRouter({
     scrollBehavior() {
         return { top: 0 }
     }
+})
+
+
+// Защита маршрутов
+router.beforeEach((to, from, next) => {
+    if (to.path === '/admin') {
+        const authStore = useAuthStore()
+        if (!authStore.isAdmin) {
+            next('/forbidden')
+            return
+        }
+    }
+    next()
 })
 
 export default router

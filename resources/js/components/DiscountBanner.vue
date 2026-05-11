@@ -2,7 +2,7 @@
     <section class="discount-banner" style="background-image: url('/images/discount-bg.png')">
         <div class="discount-overlay"></div>
         <div class="discount-container">
-            <h3>Узнавайте первыми о наших акциях, розыгрышах и новостях</h3>
+            <h3>Скидка 7%</h3>
             <p>Получите скидки при подписке на наши эксклюзивные акции, обновления и новости</p>
             <form @submit.prevent="subscribe" class="subscribe-form">
                 <input type="email" v-model="email" placeholder="Ваш E-mail" required>

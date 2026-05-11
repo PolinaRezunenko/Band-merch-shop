@@ -255,13 +255,13 @@ export default {
 
 .product-name {
     display: block;
-    font-family: 'Roboto Mono-Medium', sans-serif;
+    font-family: 'Roboto Mono';
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     color: #0a0a0a;
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: -0.5px;
+    letter-spacing: -2%;
     width: 233px;
     height: 42px;
     overflow: hidden;
@@ -274,7 +274,7 @@ export default {
 
 .product-price {
     display: block;
-    font-family: 'Roboto Mono-Regular', sans-serif;
+    font-family: 'Roboto Mono';
     font-size: 16px;
     color: #0a0a0a;
     font-weight: 400;
@@ -295,11 +295,11 @@ export default {
     color: #000000;
     border: 1px solid black;
     border-radius: 5px;
-    font-family: 'Roboto Mono-Medium', sans-serif;
+    font-family: 'Roboto Mono';
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0px;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -307,6 +307,7 @@ export default {
 .btn-add:hover {
     background: #000000;
     color: #ffffff;
+    
 }
 
 /* Счётчик "В корзине" */
@@ -333,6 +334,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    
 }
 
 .counter-btn:hover {
@@ -341,8 +343,9 @@ export default {
 
 .counter-text {
     color: #fff;
-    font-family: 'Roboto Mono-Medium', sans-serif;
+    font-family: 'Roboto Mono';
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 </style>

@@ -1,21 +1,123 @@
 <template>
-    <div class="page">
-        <div class="container">
+    <div class="about-page">
+        <div class="about-container">
+            <Breadcrumbs :items="[{ label: 'О нас', link: null }]" />
+            
             <h1>О нас</h1>
-            <p>Магазин официального мерча музыкальной группы. Лучшее качество, уникальный дизайн.</p>
+            
+            <div class="about-content">
+                <!-- Баннер -->
+                <div class="about-banner">
+                    <img src="/images/about-banner.jpg" alt="BMTH Store" @error="handleImageError">
+                </div>
+                
+                <!-- Текст -->
+                <div class="about-text">
+                    <h2>BMTH Store — официальный мерч</h2>
+                    <p>BMTH Store — это официальный интернет-магазин брендированной продукции группы Bring Me The Horizon. Мы предлагаем только оригинальный мерч: футболки, худи, свитшоты, аксессуары, виниловые пластинки и CD-диски.</p>
+                    
+                    <h3>Почему выбирают нас</h3>
+                    <ul>
+                        <li>✅ Только оригинальная продукция</li>
+                        <li>✅ Прямые поставки от производителя</li>
+                        <li>✅ Доставка по всей России (3-7 рабочих дней)</li>
+                        <li>✅ Бесплатная доставка при заказе от 5 000 ₽</li>
+                        <li>✅ Удобный возврат и обмен</li>
+                        <li>✅ Поддержка 24/7 через форму обратной связи</li>
+                    </ul>
+                    
+                    <h3>Наша миссия</h3>
+                    <p>Мы стремимся сделать качественный мерч доступным для каждого фаната. Каждый товар в нашем каталоге проходит проверку качества, чтобы вы получали только лучшие вещи с символикой любимой группы.</p>
+                </div>
+            </div>
         </div>
+        
         <DiscountBanner />
     </div>
 </template>
 
 <script>
+import Breadcrumbs from '../components/Breadcrumbs.vue'
 import DiscountBanner from '../components/DiscountBanner.vue'
-export default { name: 'AboutPage', components: { DiscountBanner } }
+
+export default {
+    name: 'AboutPage',
+    components: { Breadcrumbs, DiscountBanner },
+    methods: {
+        handleImageError(event) {
+            event.target.style.display = 'none'
+        }
+    }
+}
 </script>
 
 <style scoped>
-.page { background: #0a0a0a; min-height: 100vh; }
-.container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
-.container h1 { color: #fff; margin-bottom: 1rem; }
-.container p { color: #999; line-height: 1.8; }
+.about-page { background: #fff; min-height: 100vh; }
+.about-container { max-width: 1200px; margin: 0 auto; }
+
+h1 {
+   font-family: 'Raleway', sans-serif; 
+    color: #0a0a0a; 
+    margin-top: 30px;
+    margin-bottom: 30px; 
+    font-size: 48px; 
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.about-banner img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.about-text h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    color: #000;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.about-text h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    color: #000;
+    margin: 30px 0 15px;
+    font-weight: 600;
+}
+
+.about-text p {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.about-text ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.about-text ul li {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: #333;
+    padding: 12px 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .about-content { grid-template-columns: 1fr; gap: 30px; }
+    .about-text h2 { font-size: 24px; }
+}
 </style>

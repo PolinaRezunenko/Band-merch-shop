@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 Band Merch. Все права защищены.</p>
+                <p>© 2026 BMTH Store. Все права защищены.</p>
             </div>
         </footer>
         <!-- Контейнер для уведомлений -->
@@ -106,7 +106,8 @@
 <script>
 import { useCartStore } from './stores/cart'
 import { useAuthStore } from './stores/auth'
-import { ref, onMounted, provide } from 'vue'
+import { ref, provide } from 'vue'
+import { useSEO } from './composables/useSEO'
 import NotificationToast from './components/NotificationToast.vue'
 import BurgerMenu from './components/BurgerMenu.vue'
 import AuthModal from './components/AuthModal.vue'
@@ -116,6 +117,8 @@ export default {
     name: 'App',
     components: { NotificationToast, BurgerMenu, AuthModal, SearchModal },
     setup() {
+        useSEO()  // ← мета-теги
+        
         const notificationRef = ref(null)
         
         const notify = {
@@ -410,4 +413,205 @@ main { flex: 1; }
     .header-container { padding: 0 1rem; }
     .footer-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ========== ХЕДЕР ========== */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 97px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex: 1;
+}
+
+.nav-main {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-main a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.logo-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 66px;
+    width: auto;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.icon-img {
+    width: 22px;
+    height: 22px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+}
+
+/* Светлая шапка (главная, каталог) */
+.header-light {
+    background: transparent;
+    border-bottom: none;
+    position: absolute;
+}
+.header-light .nav-main a { color: #fff; }
+.header-light .nav-main a:hover,
+.header-light .nav-main a.router-link-active { opacity: 0.8; text-decoration: underline; }
+.header-light .logo-img { filter: brightness(0) invert(1); }
+.header-light .icon-img { filter: brightness(0) invert(1); }
+.header-light .cart-count { background: #ffffff; color: #000000; }
+
+/* Тёмная шапка (все остальные) */
+.header-dark {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+}
+.header-dark .nav-main a { color: #000; }
+.header-dark .nav-main a:hover,
+.header-dark .nav-main a.router-link-active { opacity: 0.7; text-decoration: underline; }
+.header-dark .logo-img { filter: brightness(0); }
+.header-dark .icon-img { filter: brightness(0); }
+.header-dark .cart-count { background: #000; color: #fff; }
+
+/* Адаптив */
+@media (max-width: 1024px) {
+    .header-container { padding: 0 20px; }
+    .nav-main { gap: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+    .header { height: 70px; }
+    .header-container { height: 70px; }
+    .nav-main { display: none; }
+    .logo-img { height: 40px; }
+    .header-right { gap: 0.8rem; }
+    .icon-img { width: 20px; height: 20px; }
+}
+
+@media (max-width: 480px) {
+    .header { height: 60px; }
+    .header-container { height: 60px; padding: 0 15px; }
+    .logo-img { height: 32px; }
+    .icon-img { width: 18px; height: 18px; }
+    .header-right { gap: 0.5rem; }
+    .cart-count { min-width: 12px; height: 12px; font-size: 0.5rem; top: -4px; right: -4px; }
+}
+
+
+/* ========== АДАПТИВНЫЙ ФУТЕР ========== */
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 2rem 1rem 1rem;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    .footer-col h4 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    .footer-col a {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    .footer-col p {
+        font-size: 13px;
+    }
+    .divider-strip {
+        margin: 40px auto 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 2rem 1rem 1rem;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .social-links {
+
+        margin-bottom: 20px;
+    }
+    .footer-col h4 {
+        font-size: 16px;
+    }
+    .footer-bottom {
+        font-size: 0.7rem;
+        text-align: center; /* Только копирайт по центру */
+    }
+
+}
+
+
 </style>

@@ -310,6 +310,8 @@ export default {
 
 <style scoped>
 /* HERO */
+
+
 .catalog-hero {
     height: 400px;
     background-size: cover;
@@ -330,9 +332,12 @@ export default {
 .catalog-hero-content {
     position: relative;
     z-index: 2;
-    padding-left: 120px;
-    padding-bottom: 60px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px 0px;
 }
+
 .catalog-hero-title {
     font-family: 'Zen Antique', serif;
     font-size: 68px;
@@ -340,9 +345,7 @@ export default {
     text-transform: uppercase;
     letter-spacing: 5px;
     margin: 0;
-    margin-top: 282.5px;
 }
-
 /* ПОЛУКРУГЛЫЙ РАЗДЕЛИТЕЛЬ */
 .hero-divider {
     position: absolute;
@@ -644,6 +647,40 @@ export default {
         height: 40px;
         bottom: -20px;
         border-radius: 25px;
+    }
+}
+
+
+/* Мобильная адаптация Каталога */
+@media (max-width: 768px) {
+    .catalog-hero {
+        height: 300px; /* Уменьшаем высоту баннера */
+    }
+    .catalog-hero-content {
+        padding-left: 20px !important; /* Прижимаем заголовок к левому краю */
+    }
+    .catalog-hero-title {
+        font-size: 36px !important; /* Уменьшаем размер заголовка */
+    }
+    .catalog-layout {
+        display: flex;
+        flex-direction: column; /* Фильтры уезжают наверх списка */
+    }
+    .products-grid {
+        grid-template-columns: 1fr 1fr; /* Два товара в ряд на планшетах */
+    }
+}
+
+/* Для маленьких телефонов (320-480px) */
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr; /* Один товар в ряд на телефонах */
+    }
+    .catalog-hero-title {
+        font-size: 28px !important; /* Еще меньше для узких экранов */
+    }
+    .filters-sidebar {
+        position: static; /* Убираем прилипание фильтров */
     }
 }
 </style>
