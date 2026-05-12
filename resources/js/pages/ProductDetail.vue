@@ -603,5 +603,11 @@ export default {
     .breadcrumbs-wrapper {
         padding: 20px 20px 0;
     }
+
+
 }
+
+@media (max-width: 1024px) { .product-container { padding: 0 20px 3rem; } }
+@media (max-width: 780px) { .product-container { padding: 0 20px 2rem; } }
+@media (max-width: 480px) { .product-container { padding: 0 15px 1.5rem; } }
 </style>

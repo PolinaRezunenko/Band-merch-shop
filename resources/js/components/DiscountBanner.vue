@@ -47,14 +47,19 @@ export default {
     overflow: hidden;
 }
 
-
+.discount-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
 
 .discount-container {
     position: relative;
     z-index: 2;
     text-align: left;
     padding: 47px 43px;
-    max-width: 750px;
+    max-width: 600px;
 }
 
 .discount-container h3 {
@@ -68,19 +73,16 @@ export default {
     font-family: 'Inter', sans-serif;
     color: #fff;
     max-width: 474px;
-    margin: 0 0 92px 0;
+    margin: 0 0 30px 0;
     font-size: 18px;
     line-height: 1.5;
     opacity: 0.9;
-    letter-spacing: -3%;
 }
 
 .subscribe-form {
     display: flex;
     gap: 12px;
-    max-width: 570px;
-    height: 55px;
-    margin: 0;
+    max-width: 500px;
 }
 
 .subscribe-form input {
@@ -90,30 +92,144 @@ export default {
     border: none;
     color: #817E79;
     font-family: 'Inter', sans-serif;
-    font-size: 17px;
+    font-size: 16px;
     border-radius: 100px;
     outline: none;
-    width: 356px;
-
+    min-width: 0;
 }
 
 .subscribe-form button {
-    padding: 19.5px 60px;
+    padding: 14px 30px;
     background: #ffffff;
     color: #000000;
     border: none;
     font-family: 'Inter', sans-serif;
-    font-size: 13.2px;
+    font-size: 14px;
     font-weight: 600;
     border-radius: 100px;
     cursor: pointer;
     white-space: nowrap;
-    width: 205px;
+    flex-shrink: 0;
 }
 
 .subscribe-form button:hover {
     background: black;
-    border: 1px solid rgb(255, 255, 255);
     color: #ffffff;
+    border: 1px solid #fff;
+}
+
+/* ========== АДАПТИВ ========== */
+
+/* 1024px */
+@media (max-width: 1024px) {
+    .discount-banner {
+        margin: 40px 20px;
+        height: 280px;
+    }
+    .discount-container {
+        padding: 30px;
+    }
+    .discount-container h3 {
+        font-size: 32px;
+    }
+    .discount-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .subscribe-form input {
+        font-size: 15px;
+    }
+    .subscribe-form button {
+        padding: 14px 25px;
+        font-size: 13px;
+    }
+}
+
+/* 780px */
+@media (max-width: 780px) {
+    .discount-banner {
+        margin: 30px 20px;
+        height: auto;
+        min-height: 300px;
+        justify-content: center;
+    }
+    .discount-container {
+        text-align: center;
+        padding: 30px 20px;
+        max-width: 100%;
+    }
+    .discount-container h3 {
+        font-size: 28px;
+    }
+    .discount-container p {
+        font-size: 15px;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    .subscribe-form {
+        flex-direction: column;
+        gap: 10px;
+        max-width: 100%;
+    }
+    .subscribe-form input {
+        width: 100%;
+    }
+    .subscribe-form button {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+/* 480px */
+@media (max-width: 480px) {
+    .discount-banner {
+        margin: 20px 10px;
+        min-height: 320px;
+    }
+    .discount-container {
+        padding: 25px 15px;
+    }
+    .discount-container h3 {
+        font-size: 24px;
+    }
+    .discount-container p {
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+    .subscribe-form input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    .subscribe-form button {
+        font-size: 13px;
+        padding: 12px;
+    }
+}
+
+/* 390px */
+@media (max-width: 390px) {
+    .discount-banner {
+        margin: 15px 8px;
+        min-height: 300px;
+        border-radius: 8px;
+    }
+    .discount-container {
+        padding: 20px 12px;
+    }
+    .discount-container h3 {
+        font-size: 22px;
+    }
+    .discount-container p {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+    .subscribe-form input {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+    .subscribe-form button {
+        font-size: 12px;
+        padding: 10px;
+    }
 }
 </style>

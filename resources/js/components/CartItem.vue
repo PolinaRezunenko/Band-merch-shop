@@ -124,7 +124,7 @@ export default {
 
 .cart-item-prices {
     text-align: right;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 .cart-item-price {
@@ -155,15 +155,47 @@ export default {
     opacity: 0.5;
 }
 
-@media (max-width: 640px) {
+/* Адаптив */
+@media (max-width: 1200px) {
+    .cart-item { gap: 16px; padding: 16px; }
+}
+
+@media (max-width: 1024px) {
+    .cart-item { gap: 14px; padding: 14px; }
+    .cart-item-image { width: 80px; height: 80px; }
+}
+
+@media (max-width: 780px) {
+    .cart-item { gap: 12px; padding: 12px; }
+    .cart-item-image { width: 70px; height: 70px; }
+    .cart-item-name { font-size: 14px; }
+    .cart-item-price { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
     .cart-item {
         flex-wrap: wrap;
-        gap: 15px;
+        gap: 10px;
+        padding: 10px;
     }
-    
+    .cart-item-image { width: 60px; height: 60px; }
+    .cart-item-info { flex: 1 1 60%; }
     .cart-item-prices {
         text-align: left;
         min-width: auto;
+        order: 1;
     }
+    .btn-remove {
+        order: 2;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 390px) {
+    .cart-item { gap: 8px; padding: 8px; }
+    .cart-item-image { width: 50px; height: 50px; }
+    .cart-item-name { font-size: 13px; }
+    .cart-item-price { font-size: 14px; }
+    .cart-item-size { font-size: 12px; }
 }
 </style>

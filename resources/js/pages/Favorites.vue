@@ -61,8 +61,33 @@ export default {
     font-size: 48px; 
 
 }
-.products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; justify-items: center; }
 .empty { color: #999; text-align: center; padding: 64px; font-size: 18px; }
-@media (max-width: 768px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .products-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 16px;
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 780px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 1024px) { .container { padding: 40px 20px; } }
+@media (max-width: 780px) { .container { padding: 30px 20px; } }
+@media (max-width: 480px) { .container { padding: 20px 15px; } }
 </style>

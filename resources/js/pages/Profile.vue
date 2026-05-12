@@ -436,4 +436,8 @@ h2 {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+@media (max-width: 1024px) { .profile-container { padding: 40px 20px; } }
+@media (max-width: 780px) { .profile-container { padding: 30px 20px; } }
+@media (max-width: 480px) { .profile-container { padding: 20px 15px; } }
 </style>

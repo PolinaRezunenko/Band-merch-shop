@@ -120,4 +120,8 @@ h1 {
     .about-content { grid-template-columns: 1fr; gap: 30px; }
     .about-text h2 { font-size: 24px; }
 }
+
+@media (max-width: 1024px) { .about-container { padding: 40px 20px; } }
+@media (max-width: 780px) { .about-container { padding: 30px 20px; } }
+@media (max-width: 480px) { .about-container { padding: 20px 15px; } }
 </style>

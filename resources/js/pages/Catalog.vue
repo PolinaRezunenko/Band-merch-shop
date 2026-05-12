@@ -552,7 +552,7 @@ export default {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 780px) {
     .catalog-layout {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -669,6 +669,7 @@ export default {
     .products-grid {
         grid-template-columns: 1fr 1fr; /* Два товара в ряд на планшетах */
     }
+    
 }
 
 /* Для маленьких телефонов (320-480px) */
@@ -683,4 +684,42 @@ export default {
         position: static; /* Убираем прилипание фильтров */
     }
 }
+
+/* Адаптив заголовка каталога */
+@media (max-width: 1200px) {
+    .catalog-hero { height: 350px; }
+    .catalog-hero-title { font-size: 56px; }
+}
+
+@media (max-width: 1024px) {
+    .catalog-hero { height: 300px; }
+    .catalog-hero-content { padding-left: 20px; padding-bottom: 40px; }
+    .catalog-hero-title { font-size: 48px; }
+    .hero-divider { height: 60px; bottom: -30px; border-radius: 40px; }
+}
+
+@media (max-width: 780px) {
+    .catalog-hero { height: 250px; }
+    .catalog-hero-content { padding-left: 20px; padding-bottom: 30px; }
+    .catalog-hero-title { font-size: 38px; }
+    .hero-divider { height: 50px; bottom: -25px; border-radius: 35px; }
+}
+
+@media (max-width: 480px) {
+    .catalog-hero { height: 200px; }
+    .catalog-hero-content { padding-left: 20px; padding-bottom: 25px; }
+    .catalog-hero-title { font-size: 28px; }
+    .hero-divider { height: 40px; bottom: -20px; border-radius: 25px; }
+}
+
+@media (max-width: 390px) {
+    .catalog-hero { height: 180px; }
+    .catalog-hero-content { padding-left: 15px; padding-bottom: 20px; }
+    .catalog-hero-title { font-size: 24px; }
+    .hero-divider { height: 35px; bottom: -18px; border-radius: 20px; }
+}
+
+
+@media (max-width: 780px) { .catalog-container { padding: 0 20px; } }
+@media (max-width: 480px) { .catalog-container { padding: 0 15px; } }
 </style>

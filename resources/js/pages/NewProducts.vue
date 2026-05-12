@@ -107,13 +107,31 @@ h1 {
 }
 .btn-catalog:hover { background: #333; }
 
-@media (max-width: 1200px) {
-    .products-grid { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1024px) {
+   .products-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 16px;
+        padding: 0 20px;
+    }
 }
-@media (max-width: 768px) {
-    .products-grid { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 780px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+        padding: 0 15px;
+    }
 }
+
 @media (max-width: 480px) {
-    .products-grid { grid-template-columns: 1fr; }
+    .products-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+        padding: 0 10px;
+    }
 }
+
+@media (max-width: 1024px) { .new-products-container { padding: 40px 20px; } }
+@media (max-width: 780px) { .new-products-container { padding: 30px 20px; } }
+@media (max-width: 480px) { .new-products-container { padding: 20px 15px; } }
 </style>

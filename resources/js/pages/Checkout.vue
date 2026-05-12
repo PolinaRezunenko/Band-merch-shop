@@ -266,4 +266,8 @@ export default {
     .cart-layout { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 1024px) { .checkout-container { padding: 40px 20px; } }
+@media (max-width: 780px) { .checkout-container { padding: 30px 20px; } }
+@media (max-width: 480px) { .checkout-container { padding: 20px 15px; } }
 </style>

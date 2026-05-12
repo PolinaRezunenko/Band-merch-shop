@@ -98,11 +98,34 @@ export default {
     gap: 20px;
 }
 
-@media (max-width: 768px) {
-    .products-grid { grid-template-columns: repeat(2, 1fr); }
+/* Адаптив для PopularProducts */
+@media (max-width: 1024px) {
+    .section-popular { padding: 3rem 20px; }
+    .section-title { font-size: 32px; }
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        padding: 0;
+    }
+}
+
+@media (max-width: 780px) {
+    .section-popular { padding: 2.5rem 20px; }
+    .section-title { font-size: 28px; }
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 0;
+    }
 }
 
 @media (max-width: 480px) {
-    .products-grid { grid-template-columns: 1fr; }
+    .section-popular { padding: 2rem 15px; }
+    .section-title { font-size: 24px; }
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 0;
+    }
 }
 </style>
