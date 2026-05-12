@@ -4,7 +4,6 @@
         <div class="card-badges">
             <span v-if="product.is_hot" class="badge badge-hot">🔥 HOT</span>
             <span v-if="product.is_new" class="badge badge-new">NEW</span>
-            
         </div>
         
         <!-- Иконки справа -->
@@ -24,7 +23,7 @@
         <!-- Фото -->
         <router-link :to="'/product/' + product.id" class="product-image-link">
             <img 
-                :src="product.image_url" 
+                :src="mainImage" 
                 :alt="product.name" 
                 class="product-image"
                 @error="handleImageError"
@@ -37,7 +36,7 @@
                 {{ product.name }}
             </router-link>
             
-            <span class="product-price">{{ product.price.toLocaleString() }} ₽</span>
+            <span class="product-price">{{ formatPrice(product.price) }} ₽</span>
             
             <!-- Кнопка В корзину -->
             <button v-if="quantity === 0" class="btn-add" @click="increaseQuantity">
@@ -56,6 +55,7 @@
 <script>
 import { useCartStore } from '../stores/cart'
 import { useFavoritesStore } from '../stores/favorites'
+import { supabase } from '../config/supabase'
 import { inject } from 'vue'
 
 export default {
@@ -71,21 +71,46 @@ export default {
         return {
             selectedSize: null,
             quantity: 0,
-            isFavorite: false           
+            isFavorite: false,
+            mainImage: '' // Главное изображение
         }
     },
-    mounted() {
+    async mounted() {
         if (this.product.sizes && this.product.sizes.length > 0) {
             this.selectedSize = this.product.sizes[0]
         }
         this.checkCartQuantity()
-        this.checkFavorite()            
+        this.checkFavorite()
+        await this.loadMainImage()
     },
     methods: {
+        async loadMainImage() {
+            try {
+                // Пробуем загрузить главное фото из product_images
+                const { data, error } = await supabase
+                    .from('product_images')
+                    .select('image_url')
+                    .eq('product_id', this.product.id)
+                    .eq('is_main', true)
+                    .single()
+                
+                if (data && !error) {
+                    // Формируем полный URL
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+                    this.mainImage = `${supabaseUrl}/storage/v1/object/public/product-images/${data.image_url}`
+                } else {
+                    // Если нет в product_images, используем основное фото из products
+                    this.mainImage = this.product.image_url
+                }
+            } catch (err) {
+                // В случае ошибки используем основное фото
+                this.mainImage = this.product.image_url
+            }
+        },
         handleImageError(event) {
             event.target.src = 'https://placehold.co/600x600/f5f5f5/0a0a0a?text=Нет+фото'
         },
-        checkFavorite() {              
+        checkFavorite() {
             const favStore = useFavoritesStore()
             this.isFavorite = favStore.isFavorite(this.product.id)
         },
@@ -119,13 +144,16 @@ export default {
         toggleFavorite() {
             const favStore = useFavoritesStore()
             favStore.toggleFavorite(this.product)
-            this.isFavorite = favStore.isFavorite(this.product.id)  
+            this.isFavorite = favStore.isFavorite(this.product.id)
             
             if (this.isFavorite) {
                 if (this.notify) this.notify.success('В избранном!', this.product.name)
             } else {
                 if (this.notify) this.notify.info('Удалено', 'Товар удален из избранного')
             }
+        },
+        formatPrice(price) {
+            return Number(price).toLocaleString('ru-RU')
         }
     }
 }
@@ -161,7 +189,6 @@ export default {
 }
 
 .badge {
-
     font-family: 'Inter', sans-serif;
     font-size: 13.5px;
     font-weight: 600;
@@ -227,14 +254,15 @@ export default {
     width: 244px;
     height: 256px;
     margin: 64px auto 10px;
-    overflow: hidden;
+    overflow: hidden; /* ← обрезает всё что выходит за рамки */
     flex-shrink: 0;
 }
 
 .product-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* ← обрезает и центрирует */
+    object-position: center top; /* ← фокус на верхней части (для футболок) */
     transition: transform 0.5s;
     background: #f5f5f5;
 }
@@ -307,7 +335,6 @@ export default {
 .btn-add:hover {
     background: #000000;
     color: #ffffff;
-    
 }
 
 /* Счётчик "В корзине" */
@@ -334,7 +361,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    
 }
 
 .counter-btn:hover {

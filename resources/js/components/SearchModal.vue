@@ -25,14 +25,13 @@
                             class="result-item"
                             @click="goToProduct(product.id)"
                         >
-                            <img :src="product.image_url" :alt="product.name" class="result-image">
+                            <img :src="getProductImage(product)" :alt="product.name" class="result-image" @error="handleImageError">
                             <div class="result-info">
                                 <span class="result-name">{{ product.name }}</span>
                                 <span class="result-price">{{ product.price.toLocaleString() }} ₽</span>
                             </div>
                         </div>
                         
-                        <!-- Показать все -->
                         <div class="result-show-all" @click="goToResults" v-if="results.length > 8">
                             Показать все {{ results.length }} товаров
                         </div>
@@ -43,7 +42,7 @@
                     </div>
                 </div>
                 
-                <!-- Популярные запросы (если пустой поиск) -->
+                <!-- Популярные запросы -->
                 <div class="popular-searches" v-if="query.length < 2">
                     <p class="popular-title">Популярные категории:</p>
                     <div class="popular-tags">
@@ -74,7 +73,8 @@ export default {
     data() {
         return {
             query: '',
-            results: []
+            results: [],
+            productImagesCache: {}
         }
     },
     watch: {
@@ -101,7 +101,6 @@ export default {
             }
             
             try {
-                // Ищем по названию
                 const { data, error } = await supabase
                     .from('products')
                     .select('*')
@@ -110,10 +109,40 @@ export default {
                 
                 if (!error && data) {
                     this.results = data
+                    // Загружаем главные фото для найденных товаров
+                    this.loadMainImages(data)
                 }
             } catch (err) {
                 console.error('Ошибка поиска:', err)
             }
+        },
+        
+        async loadMainImages(products) {
+            for (const product of products) {
+                try {
+                    const { data } = await supabase
+                        .from('product_images')
+                        .select('image_url')
+                        .eq('product_id', product.id)
+                        .eq('is_main', true)
+                        .single()
+                    
+                    if (data) {
+                        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+                        this.productImagesCache[product.id] = `${supabaseUrl}/storage/v1/object/public/product-images/${data.image_url}`
+                    }
+                } catch (err) {
+                    // Не найдено — будет использоваться product.image_url
+                }
+            }
+        },
+        
+        getProductImage(product) {
+            return this.productImagesCache[product.id] || product.image_url
+        },
+        
+        handleImageError(event) {
+            event.target.src = 'https://placehold.co/50x50/f5f5f5/0a0a0a?text=Нет+фото'
         },
         
         searchCategory(slug) {
@@ -145,7 +174,7 @@ export default {
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.98);
-    z-index: 9999; /* Было 1000, увеличиваем */
+    z-index: 9999;
     display: flex;
     justify-content: center;
     padding-top: 120px;
@@ -192,7 +221,6 @@ export default {
     color: #000;
 }
 
-/* Результаты */
 .results-list {
     display: flex;
     flex-direction: column;
@@ -258,7 +286,6 @@ export default {
     font-family: 'Inter', sans-serif;
 }
 
-/* Популярные запросы */
 .popular-searches {
     text-align: center;
 }

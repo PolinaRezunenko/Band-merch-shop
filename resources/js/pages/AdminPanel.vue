@@ -129,7 +129,7 @@
                             <tbody>
                                 <tr v-for="product in products" :key="product.id">
                                     <td>{{ product.id }}</td>
-                                    <td><img :src="product.image_url" width="50" height="50" style="object-fit:cover;"></td>
+                                    <td><img :src="getAdminProductImage(product)" width="50" height="50" style="object-fit:cover;" @error="e => e.target.src='https://placehold.co/50x50/f5f5f5/0a0a0a?text=Нет'"></td>
                                     <td>{{ product.name }}</td>
                                     <td>{{ product.price?.toLocaleString() }} ₽</td>
                                     <td>{{ getCategoryName(product.category_id) }}</td>
@@ -435,7 +435,10 @@ export default {
             const cats = { 1: 'Футболки', 2: 'Худи', 3: 'Аксессуары', 4: 'Винил', 5: 'CD' }
             return cats[id] || '—'
         },
-        formatDate(date) { return new Date(date).toLocaleDateString('ru-RU') }
+        formatDate(date) { return new Date(date).toLocaleDateString('ru-RU') },
+        getAdminProductImage(product) {
+    return product.image_url || 'https://placehold.co/50x50/f5f5f5/0a0a0a?text=Нет'
+}
     }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="cart-item">
         <router-link :to="'/product/' + item.id" class="cart-item-image-link">
-            <img :src="item.image_url" :alt="item.name" class="cart-item-image">
+            <img :src="itemImage" :alt="item.name" class="cart-item-image" @error="handleImageError">
         </router-link>
         
         <div class="cart-item-info">
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { supabase } from '../config/supabase'
 import QuantityCounter from './QuantityCounter.vue'
 
 export default {
@@ -46,10 +47,34 @@ export default {
     emits: ['remove', 'update-quantity'],
     data() {
         return { 
-            itemQuantity: this.item.quantity 
+            itemQuantity: this.item.quantity,
+            itemImage: this.item.image_url
         }
     },
+    async mounted() {
+        await this.loadMainImage()
+    },
     methods: {
+        async loadMainImage() {
+            try {
+                const { data, error } = await supabase
+                    .from('product_images')
+                    .select('image_url')
+                    .eq('product_id', this.item.id)
+                    .eq('is_main', true)
+                    .single()
+                
+                if (data && !error) {
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+                    this.itemImage = `${supabaseUrl}/storage/v1/object/public/product-images/${data.image_url}`
+                }
+            } catch (err) {
+                // Оставляем image_url из item
+            }
+        },
+        handleImageError(event) {
+            event.target.src = 'https://placehold.co/100x100/f5f5f5/0a0a0a?text=Нет+фото'
+        },
         updateQty(val) {
             this.itemQuantity = val
             this.$emit('update-quantity', { 
@@ -63,6 +88,7 @@ export default {
 </script>
 
 <style scoped>
+/* Стили без изменений */
 .cart-item {
     display: flex;
     align-items: center;
@@ -155,7 +181,6 @@ export default {
     opacity: 0.5;
 }
 
-/* Адаптив */
 @media (max-width: 1200px) {
     .cart-item { gap: 16px; padding: 16px; }
 }

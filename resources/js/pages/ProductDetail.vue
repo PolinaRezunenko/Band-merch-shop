@@ -28,7 +28,7 @@
                             :class="['thumbnail-btn', { active: currentImageIndex === index }]"
                             @click="currentImageIndex = index"
                         >
-                            <img :src="img" :alt="product.name + ' ' + (index + 1)" class="thumbnail-img">
+                            <img :src="img" :alt="product.name + ' фото ' + (index + 1)" class="thumbnail-img">
                         </button>
                     </div>
                 </div>
@@ -42,13 +42,13 @@
                     <p class="product-description">{{ product.description }}</p>
                     
                     <!-- Характеристики -->
-                    <div class="product-details">
+                    <div class="product-details" v-if="product.category_id === 1 || product.category_id === 2">
                         <p>100 % хлопок.</p>
                         <p>Стирка при 30 °C с вещами похожего цвета. Не сушить в стиральной машине. Гладить с изнаночной стороны на низкой температуре.</p>
                     </div>
 
-                    <!-- Таблица размеров -->
-                    <div class="size-guide">
+                    <!-- Таблица размеров (только для одежды) -->
+                    <div class="size-guide" v-if="product.category_id === 1 || product.category_id === 2">
                         <button @click="showSizeTable = !showSizeTable" class="size-table-link">
                             Таблица размеров {{ showSizeTable ? '▲' : '▼' }}
                         </button>
@@ -169,7 +169,10 @@ export default {
     },
     computed: {
         currentImage() {
-            return this.productImages[this.currentImageIndex] || this.product.image_url
+            if (this.productImages.length > 0) {
+                return this.productImages[this.currentImageIndex]
+            }
+            return this.product.image_url
         },
         breadcrumbs() {
             const catNames = { 
@@ -223,31 +226,29 @@ export default {
     methods: {
         async loadProduct() {
             try {
-                const { data, error } = await supabase
+                // 1. Загружаем товар с коллекцией
+                const { data: productData, error: productError } = await supabase
                     .from('products')
                     .select('*, collections(name)')
                     .eq('id', this.$route.params.id)
                     .single()
                 
-                if (error) throw error
+                if (productError) throw productError
                 
-                if (data) {
-                    this.product = data
+                if (productData) {
+                    this.product = productData
+                    
                     // Добавляем имя коллекции
-                    if (data.collections) {
-                        this.product.collection_name = data.collections.name
+                    if (productData.collections) {
+                        this.product.collection_name = productData.collections.name
                     }
                     
-                    // Создаем массив изображений
-                    this.productImages = [
-                        data.image_url,
-                        data.image_url,
-                        data.image_url,
-                        data.image_url
-                    ]
+                    // 2. Загружаем изображения из новой таблицы
+                    await this.loadProductImages(productData.id)
                     
-                    if (data.sizes && data.sizes.length > 0) {
-                        this.selectedSize = data.sizes[0]
+                    // Устанавливаем размер по умолчанию
+                    if (productData.sizes && productData.sizes.length > 0) {
+                        this.selectedSize = productData.sizes[0]
                     }
                 }
             } catch (err) {
@@ -257,15 +258,41 @@ export default {
                 this.loading = false
             }
         },
+        
+        async loadProductImages(productId) {
+    try {
+        const { data: imagesData, error: imagesError } = await supabase
+            .from('product_images')
+            .select('image_url')
+            .eq('product_id', productId)
+            .order('sort_order', { ascending: true })
+        
+        if (imagesError) throw imagesError
+        
+        if (imagesData && imagesData.length > 0) {
+            // Формируем полные URL для всех картинок
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+            this.productImages = imagesData.map(img => 
+                `${supabaseUrl}/storage/v1/object/public/product-images/${img.image_url}`
+            )
+            console.log('Загружены изображения:', this.productImages) // Для отладки
+        } else {
+            // Если в новой таблице нет картинок, используем основную
+            console.log('Нет записей в product_images, использую основное фото')
+            this.productImages = [this.product.image_url]
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки изображений:', err)
+        this.productImages = [this.product.image_url]
+    }
+},
+        
         formatPrice(price) {
             return Number(price).toLocaleString('ru-RU')
         },
         addToCart() {
             const cartStore = useCartStore()
             cartStore.addToCart(this.product, this.selectedSize, this.quantity)
-        },
-        toggleFavorite() {
-            this.isFavorite = !this.isFavorite
         }
     }
 }
@@ -378,7 +405,7 @@ export default {
 
 /* Название */
 .product-title {
-    font-family: 'Zen Antique', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 32px;
     color: #000;
     margin: 0;
