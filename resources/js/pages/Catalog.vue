@@ -719,7 +719,7 @@ export default {
     .hero-divider { height: 35px; bottom: -18px; border-radius: 20px; }
 }
 
-
+@media (max-width: 1024px) { .catalog-container { padding: 0 20px; } }
 @media (max-width: 780px) { .catalog-container { padding: 0 20px; } }
 @media (max-width: 480px) { .catalog-container { padding: 0 15px; } }
 </style>
