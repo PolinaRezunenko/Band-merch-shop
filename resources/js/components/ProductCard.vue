@@ -16,7 +16,7 @@
                 >
             </button>
             <button class="btn-quick-add" @click="increaseQuantity">
-                <img src="/images/icons/plus.svg" alt="Добавить" class="action-icon">
+                <img src="/images/icons/plus.svg" alt="Добавить в корзину" class="action-icon">
             </button>
         </div>
 
@@ -24,8 +24,9 @@
         <router-link :to="'/product/' + product.id" class="product-image-link">
             <img 
                 :src="mainImage" 
-                :alt="product.name" 
+                :alt="mainAltText" 
                 class="product-image"
+                loading="lazy"
                 @error="handleImageError"
             >
         </router-link>
@@ -72,7 +73,8 @@ export default {
             selectedSize: null,
             quantity: 0,
             isFavorite: false,
-            mainImage: '' // Главное изображение
+            mainImage: '',
+            mainAltText: ''
         }
     },
     async mounted() {
@@ -86,29 +88,29 @@ export default {
     methods: {
         async loadMainImage() {
             try {
-                // Пробуем загрузить главное фото из product_images
                 const { data, error } = await supabase
                     .from('product_images')
-                    .select('image_url')
+                    .select('image_url, alt_text')
                     .eq('product_id', this.product.id)
                     .eq('is_main', true)
                     .single()
                 
                 if (data && !error) {
-                    // Формируем полный URL
                     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                     this.mainImage = `${supabaseUrl}/storage/v1/object/public/product-images/${data.image_url}`
+                    this.mainAltText = data.alt_text || this.product.name
                 } else {
-                    // Если нет в product_images, используем основное фото из products
                     this.mainImage = this.product.image_url
+                    this.mainAltText = this.product.name
                 }
             } catch (err) {
-                // В случае ошибки используем основное фото
                 this.mainImage = this.product.image_url
+                this.mainAltText = this.product.name
             }
         },
         handleImageError(event) {
             event.target.src = 'https://placehold.co/600x600/f5f5f5/0a0a0a?text=Нет+фото'
+            event.target.alt = 'Изображение недоступно'
         },
         checkFavorite() {
             const favStore = useFavoritesStore()

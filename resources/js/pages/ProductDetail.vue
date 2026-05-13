@@ -15,8 +15,10 @@
                     <div class="main-image-wrapper">
                         <img 
                             :src="currentImage" 
-                            :alt="product.name" 
+                            :alt="currentAltText" 
                             class="main-image"
+                            loading="eager"
+                            @error="handleImageError"
                         >
                     </div>
 
@@ -28,7 +30,13 @@
                             :class="['thumbnail-btn', { active: currentImageIndex === index }]"
                             @click="currentImageIndex = index"
                         >
-                            <img :src="img" :alt="product.name + ' фото ' + (index + 1)" class="thumbnail-img">
+                            <img 
+                                :src="img.url" 
+                                :alt="img.alt || (product.name + ' фото ' + (index + 1))" 
+                                class="thumbnail-img"
+                                loading="lazy"
+                                @error="handleThumbnailError"
+                            >
                         </button>
                     </div>
                 </div>
@@ -170,9 +178,15 @@ export default {
     computed: {
         currentImage() {
             if (this.productImages.length > 0) {
-                return this.productImages[this.currentImageIndex]
+                return this.productImages[this.currentImageIndex]?.url || this.product.image_url
             }
             return this.product.image_url
+        },
+        currentAltText() {
+            if (this.productImages.length > 0 && this.productImages[this.currentImageIndex]) {
+                return this.productImages[this.currentImageIndex].alt || this.product.name
+            }
+            return this.product.name
         },
         breadcrumbs() {
             const catNames = { 
@@ -194,7 +208,6 @@ export default {
                 { label: 'Каталог', link: '/catalog' }
             ]
             
-            // Добавляем коллекцию если есть
             if (this.product.collection_name) {
                 crumbs.push({ 
                     label: this.product.collection_name, 
@@ -202,7 +215,6 @@ export default {
                 })
             }
             
-            // Добавляем категорию
             if (this.product.category_id) {
                 crumbs.push({ 
                     label: catNames[this.product.category_id] || 'Каталог', 
@@ -210,7 +222,6 @@ export default {
                 })
             }
             
-            // Добавляем название товара
             crumbs.push({ 
                 label: this.product.name || 'Товар', 
                 link: null 
@@ -226,7 +237,6 @@ export default {
     methods: {
         async loadProduct() {
             try {
-                // 1. Загружаем товар с коллекцией
                 const { data: productData, error: productError } = await supabase
                     .from('products')
                     .select('*, collections(name)')
@@ -238,15 +248,12 @@ export default {
                 if (productData) {
                     this.product = productData
                     
-                    // Добавляем имя коллекции
                     if (productData.collections) {
                         this.product.collection_name = productData.collections.name
                     }
                     
-                    // 2. Загружаем изображения из новой таблицы
                     await this.loadProductImages(productData.id)
                     
-                    // Устанавливаем размер по умолчанию
                     if (productData.sizes && productData.sizes.length > 0) {
                         this.selectedSize = productData.sizes[0]
                     }
@@ -260,36 +267,50 @@ export default {
         },
         
         async loadProductImages(productId) {
-    try {
-        const { data: imagesData, error: imagesError } = await supabase
-            .from('product_images')
-            .select('image_url')
-            .eq('product_id', productId)
-            .order('sort_order', { ascending: true })
+            try {
+                const { data: imagesData, error: imagesError } = await supabase
+                    .from('product_images')
+                    .select('image_url, alt_text')
+                    .eq('product_id', productId)
+                    .order('sort_order', { ascending: true })
+                
+                if (imagesError) throw imagesError
+                
+                if (imagesData && imagesData.length > 0) {
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+                    this.productImages = imagesData.map(img => ({
+                        url: `${supabaseUrl}/storage/v1/object/public/product-images/${img.image_url}`,
+                        alt: img.alt_text || this.product.name
+                    }))
+                } else {
+                    this.productImages = [{
+                        url: this.product.image_url,
+                        alt: this.product.name
+                    }]
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки изображений:', err)
+                this.productImages = [{
+                    url: this.product.image_url,
+                    alt: this.product.name
+                }]
+            }
+        },
         
-        if (imagesError) throw imagesError
+        handleImageError(event) {
+            event.target.src = 'https://placehold.co/600x600/f5f5f5/0a0a0a?text=Нет+фото'
+            event.target.alt = 'Изображение недоступно'
+        },
         
-        if (imagesData && imagesData.length > 0) {
-            // Формируем полные URL для всех картинок
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
-            this.productImages = imagesData.map(img => 
-                `${supabaseUrl}/storage/v1/object/public/product-images/${img.image_url}`
-            )
-            console.log('Загружены изображения:', this.productImages) // Для отладки
-        } else {
-            // Если в новой таблице нет картинок, используем основную
-            console.log('Нет записей в product_images, использую основное фото')
-            this.productImages = [this.product.image_url]
-        }
-    } catch (err) {
-        console.error('Ошибка загрузки изображений:', err)
-        this.productImages = [this.product.image_url]
-    }
-},
+        handleThumbnailError(event) {
+            event.target.src = 'https://placehold.co/120x120/f5f5f5/0a0a0a?text=Нет'
+            event.target.alt = 'Миниатюра недоступна'
+        },
         
         formatPrice(price) {
             return Number(price).toLocaleString('ru-RU')
         },
+        
         addToCart() {
             const cartStore = useCartStore()
             cartStore.addToCart(this.product, this.selectedSize, this.quantity)
@@ -299,13 +320,11 @@ export default {
 </script>
 
 <style scoped>
-/* Общие стили */
 .product-page {
     background: #ffffff;
     min-height: 100vh;
 }
 
-/* Хлебные крошки */
 .breadcrumbs-wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -316,7 +335,6 @@ export default {
     max-width: 1200px;
 }
 
-/* Контейнер товара */
 .product-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -333,7 +351,6 @@ export default {
     font-size: 1.2rem;
 }
 
-/* Основной layout */
 .product-layout {
     display: grid;
     grid-template-columns: 488px 1fr;
@@ -342,7 +359,6 @@ export default {
     margin-top: 30px;
 }
 
-/* Левая колонка - Галерея */
 .product-gallery-col {
     display: flex;
     flex-direction: column;
@@ -363,7 +379,6 @@ export default {
     object-fit: cover;
 }
 
-/* Слайдер миниатюр */
 .thumbnail-slider {
     display: flex;
     gap: 16px;
@@ -396,14 +411,12 @@ export default {
     object-fit: cover;
 }
 
-/* Правая колонка - Информация */
 .product-info-col {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* Название */
 .product-title {
     font-family: 'Inter', sans-serif;
     font-size: 32px;
@@ -413,7 +426,6 @@ export default {
     text-transform: uppercase;
 }
 
-/* Описание */
 .product-description {
     font-family: 'Inter', sans-serif;
     font-size: 16px;
@@ -422,7 +434,6 @@ export default {
     margin: 0;
 }
 
-/* Характеристики */
 .product-details {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
@@ -434,7 +445,6 @@ export default {
     margin-bottom: 8px;
 }
 
-/* Таблица размеров */
 .size-guide {
     margin: 10px 0;
 }
@@ -482,7 +492,6 @@ export default {
     color: #666;
 }
 
-/* Размер */
 .product-size h4 {
     font-family: 'Inter', sans-serif;
     font-size: 16px;
@@ -520,7 +529,6 @@ export default {
     border-color: #000;
 }
 
-/* Цена */
 .product-price-block {
     margin: 10px 0;
 }
@@ -545,7 +553,6 @@ export default {
     text-decoration: line-through;
 }
 
-/* Действия */
 .product-actions {
     display: flex;
     gap: 16px;
@@ -572,7 +579,6 @@ export default {
     background: #333;
 }
 
-/* Доставка */
 .delivery-info {
     padding: 20px;
     background: #f9f9f9;
@@ -591,7 +597,6 @@ export default {
     margin-bottom: 0;
 }
 
-/* Адаптивность */
 @media (max-width: 1024px) {
     .product-layout {
         grid-template-columns: 1fr;
@@ -630,8 +635,6 @@ export default {
     .breadcrumbs-wrapper {
         padding: 20px 20px 0;
     }
-
-
 }
 
 @media (max-width: 1024px) { .product-container { padding: 0 20px 3rem; } }
