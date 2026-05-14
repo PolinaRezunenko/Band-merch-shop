@@ -7,7 +7,17 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 RUN a2enmod rewrite
 
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+# Конфиг Apache с HTTPS
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    SetEnvIf X-Forwarded-Proto https HTTPS=on\n\
+    SetEnvIf X-Forwarded-Proto https REQUEST_SCHEME=https\n\
+    <Directory /var/www/html/public>\n\
+        Options Indexes FollowSymLinks\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -15,7 +25,6 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN cp .env.example .env
-RUN echo "APP_URL=https://bmth-store.onrender.com" >> .env
 RUN composer install --no-dev --optimize-autoloader
 RUN npm ci && npm run build
 RUN php artisan key:generate

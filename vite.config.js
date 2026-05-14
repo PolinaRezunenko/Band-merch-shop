@@ -22,5 +22,4 @@ export default defineConfig({
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
-    base: 'https://bmth-store.onrender.com/build/',
 });
