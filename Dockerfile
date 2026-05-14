@@ -7,7 +7,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 RUN a2enmod rewrite
 
-# Настройка Apache — DocumentRoot на public/
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -16,6 +15,7 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN cp .env.example .env
+RUN echo "APP_URL=https://bmth-store.onrender.com" >> .env
 RUN composer install --no-dev --optimize-autoloader
 RUN npm ci && npm run build
 RUN php artisan key:generate
