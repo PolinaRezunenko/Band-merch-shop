@@ -19,7 +19,5 @@ RUN php artisan key:generate
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-COPY .htaccess /var/www/html/public/.htaccess
-
 EXPOSE 80
 CMD ["apache2-foreground"]
