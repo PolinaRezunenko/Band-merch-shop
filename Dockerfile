@@ -7,12 +7,14 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 RUN a2enmod rewrite
 
+# Настройка Apache — DocumentRoot на public/
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 COPY . .
 
-# Создаем .env из .env.example перед генерацией ключа
 RUN cp .env.example .env
 RUN composer install --no-dev --optimize-autoloader
 RUN npm ci && npm run build
