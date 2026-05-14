@@ -323,4 +323,117 @@ export default {
 @media (max-width: 1024px) { .cart-container { padding: 40px 20px; } }
 @media (max-width: 780px) { .cart-container { padding: 30px 20px; } }
 @media (max-width: 480px) { .cart-container { padding: 20px 15px; } }
+
+/* Корзина на маленьких экранах */
+@media (max-width: 480px) {
+    .cart-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .cart-summary {
+        position: static;
+    }
+    
+    .summary-block {
+        padding: 20px;
+    }
+    
+    .cart-title {
+        font-size: 24px;
+    }
+    
+    .btn-checkout {
+        padding: 14px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 390px) {
+    .cart-item {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .cart-item-name {
+        font-size: 13px;
+    }
+    
+    .cart-item-price {
+        font-size: 14px;
+    }
+    
+    .cart-item-prices {
+        text-align: left;
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .btn-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .cart-item {
+        position: relative;
+    }
+    
+    .coupon-block {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-coupon {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 325px) {
+    .cart-container {
+        padding: 20px 10px;
+    }
+    
+    .cart-title {
+        font-size: 22px;
+    }
+    
+    .cart-item {
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    .cart-item-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .cart-item-name {
+        font-size: 12px;
+    }
+    
+    .cart-item-price {
+        font-size: 13px;
+    }
+    
+    .summary-total {
+        font-size: 16px;
+    }
+    
+    .total-price {
+        font-size: 20px;
+    }
+    
+    .btn-checkout {
+        padding: 12px;
+        font-size: 12px;
+    }
+}
 </style>

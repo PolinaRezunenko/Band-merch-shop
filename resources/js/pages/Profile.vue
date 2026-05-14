@@ -440,4 +440,64 @@ h2 {
 @media (max-width: 1024px) { .profile-container { padding: 40px 20px; } }
 @media (max-width: 780px) { .profile-container { padding: 30px 20px; } }
 @media (max-width: 480px) { .profile-container { padding: 20px 15px; } }
+
+@media (max-width: 768px) {
+    .profile-layout,
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-sidebar,
+    .admin-sidebar {
+        position: static;
+        margin-bottom: 20px;
+    }
+    
+    .profile-nav,
+    .admin-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 10px 14px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-nav,
+    .admin-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 calc(50% - 5px);
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .btn-admin,
+    .btn-logout {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 390px) {
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 100%;
+        padding: 8px;
+        font-size: 11px;
+    }
+}
 </style>

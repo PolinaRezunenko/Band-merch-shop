@@ -270,4 +270,173 @@ export default {
 @media (max-width: 1024px) { .checkout-container { padding: 40px 20px; } }
 @media (max-width: 780px) { .checkout-container { padding: 30px 20px; } }
 @media (max-width: 480px) { .checkout-container { padding: 20px 15px; } }
+
+/* Оформление заказа на маленьких экранах */
+@media (max-width: 480px) {
+    .checkout-title {
+        font-size: 24px;
+        margin: 20px 0;
+    }
+    
+    .cart-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .cart-summary {
+        position: static;
+    }
+    
+    .summary-block {
+        padding: 20px;
+    }
+    
+    .form-title {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .form-section {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+    }
+    
+    .form-section h3 {
+        font-size: 18px;
+    }
+    
+    .btn-submit {
+        padding: 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 390px) {
+    .checkout-container {
+        padding: 20px 10px;
+    }
+    
+    .checkout-title {
+        font-size: 22px;
+    }
+    
+    .cart-item {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+        position: relative;
+    }
+    
+    .cart-item-image {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .cart-item-name {
+        font-size: 12px;
+    }
+    
+    .cart-item-price {
+        font-size: 13px;
+    }
+    
+    .cart-item-prices {
+        text-align: left;
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .btn-remove {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .form-group input {
+        padding: 12px;
+        font-size: 13px;
+    }
+    
+    .radio-label {
+        font-size: 13px;
+    }
+    
+    .comment-input {
+        font-size: 13px;
+    }
+    
+    .coupon-block {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-coupon {
+        width: 100%;
+    }
+}
+
+@media (max-width: 325px) {
+    .checkout-container {
+        padding: 15px 8px;
+    }
+    
+    .checkout-title {
+        font-size: 20px;
+        margin: 15px 0;
+    }
+    
+    .cart-item {
+        padding: 6px;
+        gap: 6px;
+    }
+    
+    .cart-item-image {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .cart-item-name {
+        font-size: 11px;
+    }
+    
+    .cart-item-price {
+        font-size: 12px;
+    }
+    
+    .form-title {
+        font-size: 20px;
+    }
+    
+    .form-section h3 {
+        font-size: 16px;
+    }
+    
+    .form-group label {
+        font-size: 12px;
+    }
+    
+    .form-group input {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .btn-submit {
+        padding: 14px;
+        font-size: 13px;
+    }
+    
+    .summary-total {
+        font-size: 15px;
+    }
+    
+    .total-price {
+        font-size: 18px;
+    }
+}
 </style>

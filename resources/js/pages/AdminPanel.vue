@@ -495,4 +495,64 @@ h1 { font-family: 'Zen Antique', serif; font-size: 36px; margin: 30px 0; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .form-grid-admin { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 768px) {
+    .profile-layout,
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-sidebar,
+    .admin-sidebar {
+        position: static;
+        margin-bottom: 20px;
+    }
+    
+    .profile-nav,
+    .admin-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 10px 14px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-nav,
+    .admin-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 calc(50% - 5px);
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .btn-admin,
+    .btn-logout {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 390px) {
+    .profile-nav button,
+    .admin-nav button {
+        flex: 1 1 100%;
+        padding: 8px;
+        font-size: 11px;
+    }
+}
 </style>      а этот файл админ панель так и остается?
