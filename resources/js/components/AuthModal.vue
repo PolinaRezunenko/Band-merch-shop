@@ -23,54 +23,20 @@
             </button>
           </div>
 
-          <!-- Форма регистрации -->
+          <!-- Форма регистрации (упрощенная) -->
           <div v-if="activeTab === 'register'" class="auth-form">
             <div class="form-group">
-              <label>Имя</label>
-              <input 
-                v-model="registerData.firstName" 
-                type="text" 
-                class="form-input"
-                placeholder="Имя"
-              >
-            </div>
-            
-            <div class="form-group">
-              <label>Фамилия</label>
-              <input 
-                v-model="registerData.lastName" 
-                type="text" 
-                class="form-input"
-                placeholder="Фамилия"
-              >
-            </div>
-            
-            <div class="form-group">
-              <label>E-mail</label>
+              <label>E-mail *</label>
               <input 
                 v-model="registerData.email" 
                 type="email" 
                 class="form-input"
-                placeholder="E-mail"
+                placeholder="your@email.com"
               >
             </div>
             
             <div class="form-group">
-              <label>Телефон</label>
-              <div class="phone-input">
-                <span class="phone-prefix">+7</span>
-                <input 
-                  v-model="registerData.phone" 
-                  type="tel" 
-                  class="form-input"
-                  placeholder="(999) 999-99-99"
-                  @input="formatPhone($event)"
-                >
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label>Пароль</label>
+              <label>Пароль *</label>
               <input 
                 v-model="registerData.password" 
                 type="password" 
@@ -80,7 +46,7 @@
             </div>
             
             <div class="form-group">
-              <label>Повторите пароль</label>
+              <label>Повторите пароль *</label>
               <input 
                 v-model="registerData.confirmPassword" 
                 type="password" 
@@ -89,12 +55,58 @@
               >
             </div>
             
+            <!-- Опциональные поля (скрыты, можно добавить позже) -->
+            <div class="optional-fields">
+              <button type="button" class="show-optional-btn" @click="showOptional = !showOptional">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" :style="{ transform: showOptional ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                {{ showOptional ? 'Скрыть дополнительные поля' : 'Дополнительно (имя, телефон)' }}
+              </button>
+              
+              <div v-if="showOptional" class="optional-fields-content">
+                <div class="form-group">
+                  <label>Имя</label>
+                  <input 
+                    v-model="registerData.firstName" 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Имя"
+                  >
+                </div>
+                
+                <div class="form-group">
+                  <label>Фамилия</label>
+                  <input 
+                    v-model="registerData.lastName" 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Фамилия"
+                  >
+                </div>
+                
+                <div class="form-group">
+                  <label>Телефон</label>
+                  <div class="phone-input">
+                    <span class="phone-prefix">+7</span>
+                    <input 
+                      v-model="registerData.phone" 
+                      type="tel" 
+                      class="form-input"
+                      placeholder="(999) 999-99-99"
+                      @input="formatPhone($event)"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <button 
               class="submit-btn" 
               @click="handleRegister"
               :disabled="registerLoading"
             >
-              {{ registerLoading ? 'Регистрация...' : 'Продолжить' }}
+              {{ registerLoading ? 'Регистрация...' : 'Зарегистрироваться' }}
             </button>
           </div>
 
@@ -125,11 +137,11 @@
               @click="handleLogin"
               :disabled="loginLoading"
             >
-              {{ loginLoading ? 'Вход...' : 'Продолжить' }}
+              {{ loginLoading ? 'Вход...' : 'Войти' }}
             </button>
             
             <div class="login-footer">
-              <a href="#" class="forgot-password" @click="openForgotPassword">
+              <a href="#" class="forgot-password" @click.prevent="openForgotPassword">
                 Забыли пароль?
               </a>
             </div>
@@ -186,6 +198,7 @@ export default {
   emits: ['close', 'success'],
   setup(props, { emit }) {
     const activeTab = ref('register')
+    const showOptional = ref(false)
     const authStore = useAuthStore()
     const notify = inject('notify', { success: alert, error: alert, info: alert })
     
@@ -202,7 +215,7 @@ export default {
     
     const errors = ref([])
     const fieldErrors = reactive({
-      firstName: '', lastName: '', email: '', password: '', confirmPassword: ''
+      email: '', password: '', confirmPassword: ''
     })
 
     const clearErrors = () => {
@@ -210,29 +223,10 @@ export default {
       Object.keys(fieldErrors).forEach(k => fieldErrors[k] = '')
     }
 
+    // Упрощенная валидация (только email и пароль)
     const validateRegister = () => {
       clearErrors()
       let valid = true
-      
-      if (!registerData.firstName.trim()) {
-        fieldErrors.firstName = 'Введите имя'
-        errors.value.push('Введите имя')
-        valid = false
-      } else if (registerData.firstName.trim().length < 2) {
-        fieldErrors.firstName = 'Минимум 2 символа'
-        errors.value.push('Имя должно содержать минимум 2 символа')
-        valid = false
-      }
-      
-      if (!registerData.lastName.trim()) {
-        fieldErrors.lastName = 'Введите фамилию'
-        errors.value.push('Введите фамилию')
-        valid = false
-      } else if (registerData.lastName.trim().length < 2) {
-        fieldErrors.lastName = 'Минимум 2 символа'
-        errors.value.push('Фамилия должна содержать минимум 2 символа')
-        valid = false
-      }
       
       if (!registerData.email.trim()) {
         fieldErrors.email = 'Введите email'
@@ -248,32 +242,10 @@ export default {
         fieldErrors.password = 'Введите пароль'
         errors.value.push('Введите пароль')
         valid = false
-      } else {
-        if (registerData.password.length < 8) {
-          fieldErrors.password = 'Минимум 8 символов'
-          errors.value.push('Пароль должен содержать минимум 8 символов')
-          valid = false
-        }
-        if (!/[A-Z]/.test(registerData.password)) {
-          fieldErrors.password = 'Добавьте заглавную букву (A-Z)'
-          errors.value.push('Пароль должен содержать заглавную букву')
-          valid = false
-        }
-        if (!/[a-z]/.test(registerData.password)) {
-          fieldErrors.password = 'Добавьте строчную букву (a-z)'
-          errors.value.push('Пароль должен содержать строчную букву')
-          valid = false
-        }
-        if (!/[0-9]/.test(registerData.password)) {
-          fieldErrors.password = 'Добавьте цифру (0-9)'
-          errors.value.push('Пароль должен содержать цифру')
-          valid = false
-        }
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(registerData.password)) {
-          fieldErrors.password = 'Добавьте спецсимвол (!@#$%)'
-          errors.value.push('Пароль должен содержать спецсимвол')
-          valid = false
-        }
+      } else if (registerData.password.length < 6) {
+        fieldErrors.password = 'Минимум 6 символов'
+        errors.value.push('Пароль должен содержать минимум 6 символов')
+        valid = false
       }
       
       if (registerData.password && registerData.password !== registerData.confirmPassword) {
@@ -350,7 +322,13 @@ export default {
         const { data, error } = await supabase.auth.signUp({
           email: registerData.email,
           password: registerData.password,
-          options: { data: { first_name: registerData.firstName, last_name: registerData.lastName, phone: registerData.phone } }
+          options: { 
+            data: { 
+              first_name: registerData.firstName || '',
+              last_name: registerData.lastName || '',
+              phone: registerData.phone || ''
+            } 
+          }
         })
         
         if (error) {
@@ -362,8 +340,12 @@ export default {
         }
         
         if (data.user) {
-          await supabase.from('profiles').insert({
-            id: data.user.id, first_name: registerData.firstName, last_name: registerData.lastName, phone: registerData.phone
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            first_name: registerData.firstName || '',
+            last_name: registerData.lastName || '',
+            phone: registerData.phone || '',
+            email: registerData.email
           })
         }
         
@@ -378,7 +360,9 @@ export default {
           activeTab.value = 'login'
         }
         
+        // Очистка формы
         Object.keys(registerData).forEach(k => registerData[k] = '')
+        showOptional.value = false
       } catch (err) {
         notify.error('Ошибка регистрации', err.message || 'Попробуйте позже')
       } finally {
@@ -445,11 +429,24 @@ export default {
     }
 
     return {
-      activeTab, registerData, loginData, forgotPasswordEmail,
-      registerLoading, loginLoading, forgotPasswordLoading, showForgotPassword,
-      errors, fieldErrors, clearErrors,
-      closeModal, openForgotPassword, closeForgotPassword, formatPhone,
-      handleRegister, handleLogin, handleForgotPassword
+      activeTab,
+      showOptional,
+      registerData,
+      loginData,
+      forgotPasswordEmail,
+      registerLoading,
+      loginLoading,
+      forgotPasswordLoading,
+      showForgotPassword,
+      errors,
+      fieldErrors,
+      closeModal,
+      openForgotPassword,
+      closeForgotPassword,
+      formatPhone,
+      handleRegister,
+      handleLogin,
+      handleForgotPassword
     }
   }
 }
@@ -554,15 +551,6 @@ export default {
   gap: 20px;
 }
 
-.form-row {
-  display: flex;
-  gap: 20px;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
@@ -587,6 +575,38 @@ export default {
 .form-input:focus {
   outline: none;
   border-color: #000;
+}
+
+/* Опциональные поля */
+.optional-fields {
+  margin-top: 5px;
+}
+
+.show-optional-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+}
+
+.show-optional-btn:hover {
+  color: #000;
+}
+
+.optional-fields-content {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .phone-input {
@@ -667,6 +687,7 @@ export default {
   text-align: center;
 }
 
+/* Анимации */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease;
@@ -688,12 +709,8 @@ export default {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -707,14 +724,10 @@ export default {
   }
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
   .auth-modal-content {
     padding: 30px 20px;
-  }
-  
-  .form-row {
-    flex-direction: column;
-    gap: 15px;
   }
   
   .auth-tabs {
