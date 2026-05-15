@@ -2,67 +2,64 @@
     <div class="home">
         <!-- Hero баннер -->
         <section class="hero" style="background-image: url('/images/hero-bg.png')">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 class="hero-title">ПОГРУЗИТЕСЬ В МИР<br>СТИЛЬНЫХ НОВИНОК!</h1>
-        <router-link to="/catalog" class="hero-btn">Перейти в каталог</router-link>
-    </div>
-
-    <!-- Полукруглый разделитель -->
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">ОФИЦИАЛЬНЫЙ МЕРЧ <br>BRING ME THE HORIZON</h1>
+                <router-link to="/catalog" class="hero-btn">Перейти в каталог</router-link>
+            </div>
+            <!-- Полукруглый разделитель -->
             <div class="hero-divider"></div>
-</section>
+        </section>
 
-       <!-- Самое популярное сейчас -->
-<PopularProducts title="Самое популярное сейчас" filter="hot" :limit="4" />
+        <!-- Самое популярное сейчас -->
+        <PopularProducts title="Самое популярное сейчас" filter="hot" :limit="4" />
 
-<!-- Новинки -->
-<section class="section section-new">
-    <div class="section-header">
-        <h2 class="section-title">Новинки</h2>
-    </div>
-    <div class="products-grid">
-        <ProductCard 
-            v-for="product in newProducts"   
-            :key="product.id" 
-            :product="product"
-        />
-    </div>
-</section>
-<!-- Категории каталога -->
-<section class="section section-categories">
+        <!-- Новинки -->
+        <section class="section section-new">
+            <div class="section-header">
+                <h2 class="section-title">Новинки</h2>
+            </div>
+            <div class="products-grid">
+                <ProductCard 
+                    v-for="product in newProducts"   
+                    :key="product.id" 
+                    :product="product"
+                />
+            </div>
+        </section>
 
-    <div class="categories-layout">
-        <!-- Две большие карточки слева (рядом) -->
-        <div class="categories-left">
-            <router-link to="/catalog/t-shirts" class="category-card category-card-large">
-                <img src="/images/categories/t-shirts.png" alt="Футболки">
-                <span>Футболки</span>
-            </router-link>
-            <router-link to="/catalog/hoodies" class="category-card category-card-large">
-                <img src="/images/categories/hoodies.png" alt="Худи">
-                <span>Худи</span>
-            </router-link>
-        </div>
-        <!-- Три маленькие карточки справа (колонка) -->
-        <div class="categories-right">
-            <router-link to="/catalog/accessories" class="category-card category-card-small">
-                <img src="/images/categories/accessories.png" alt="Аксессуары">
-                <span>Аксессуары</span>
-            </router-link>
-            <router-link to="/catalog/vinyl" class="category-card category-card-small">
-                <img src="/images/categories/vinyl.png" alt="Винил">
-                <span>Винил</span>
-            </router-link>
-            <router-link to="/catalog/cd" class="category-card category-card-small">
-                <img src="/images/categories/cd.png" alt="CD-диски">
-                <span>CD-диски</span>
-            </router-link>
-        </div>
-    </div>
-</section>
+        <!-- Категории каталога -->
+        <section class="section section-categories">
+            <div class="categories-layout">
+                <div class="categories-left">
+                    <router-link to="/catalog/t-shirts" class="category-card category-card-large">
+                        <img src="/images/categories/t-shirts.png" alt="Футболки" loading="lazy">
+                        <span>Футболки</span>
+                    </router-link>
+                    <router-link to="/catalog/hoodies" class="category-card category-card-large">
+                        <img src="/images/categories/hoodies.png" alt="Худи" loading="lazy">
+                        <span>Худи</span>
+                    </router-link>
+                </div>
+                <div class="categories-right">
+                    <router-link to="/catalog/accessories" class="category-card category-card-small">
+                        <img src="/images/categories/accessories.png" alt="Аксессуары" loading="lazy">
+                        <span>Аксессуары</span>
+                    </router-link>
+                    <router-link to="/catalog/vinyl" class="category-card category-card-small">
+                        <img src="/images/categories/vinyl.png" alt="Винил" loading="lazy">
+                        <span>Винил</span>
+                    </router-link>
+                    <router-link to="/catalog/cd" class="category-card category-card-small">
+                        <img src="/images/categories/cd.png" alt="CD-диски" loading="lazy">
+                        <span>CD-диски</span>
+                    </router-link>
+                </div>
+            </div>
+        </section>
 
         <!-- Скидка 7% -->
-    <DiscountBanner />
+        <DiscountBanner />
     </div>
 </template>
 
@@ -336,7 +333,7 @@ export default {
 
 .subscribe-form button:hover { background: #333; }
 
-/* ========== АДАПТИВ (ВСЁ ВМЕСТЕ) ========== */
+/* ========== АДАПТИВ ========== */
 @media (max-width: 1200px) {
     .products-grid { grid-template-columns: repeat(3, 1fr); }
     .hero-title { font-size: 52px; }
@@ -347,7 +344,6 @@ export default {
     .hero-content { padding: 200px 20px 120px 60px; }
     .hero-title { font-size: 42px; }
 
-    /* Каталог: все карточки друг под другом */
     .categories-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -386,10 +382,10 @@ export default {
     .hero-btn { padding: 12px 20px; font-size: 12px; }
     .hero-divider { height: 40px; bottom: -20px; border-radius: 25px; }
 
+    /* Глобальная сетка товаров - оставляем 1 колонку */
     .products-grid { grid-template-columns: 1fr; }
     .section-title { font-size: 24px; }
 
-    /* Каталог: одна колонка */
     .categories-layout { grid-template-columns: 1fr; }
     .category-card-large { height: 200px; }
     .category-card-small { height: 130px; }
@@ -403,7 +399,9 @@ export default {
     .subscribe-form button { width: 100%; }
 }
 
-/* Адаптив для секции Новинки */
+/* ========== ТОЛЬКО СЕКЦИЯ НОВИНКИ - 2 КОЛОНКИ НА МОБИЛЬНЫХ ========== */
+
+/* На планшетах - 3 колонки */
 @media (max-width: 1024px) {
     .section-new .products-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -411,6 +409,7 @@ export default {
     }
 }
 
+/* На 780px - 2 колонки */
 @media (max-width: 780px) {
     .section-new .products-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -418,10 +417,19 @@ export default {
     }
 }
 
+/* На 480px - 2 колонки (вместо 1) */
 @media (max-width: 480px) {
     .section-new .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
+    }
+}
+
+/* На 390px - всё ещё 2 колонки */
+@media (max-width: 390px) {
+    .section-new .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 }
 

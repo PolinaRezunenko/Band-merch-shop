@@ -18,12 +18,42 @@
                     
                     <h3>Почему выбирают нас</h3>
                     <ul>
-                        <li>✅ Только оригинальная продукция</li>
-                        <li>✅ Прямые поставки от производителя</li>
-                        <li>✅ Доставка по всей России (3-7 рабочих дней)</li>
-                        <li>✅ Бесплатная доставка при заказе от 5 000 ₽</li>
-                        <li>✅ Удобный возврат и обмен</li>
-                        <li>✅ Поддержка 24/7 через форму обратной связи</li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Только оригинальная продукция
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Прямые поставки от производителя
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Доставка по всей России (3-7 рабочих дней)
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Бесплатная доставка при заказе от 5 000 ₽
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Удобный возврат и обмен
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Поддержка 24/7 через форму обратной связи
+                        </li>
                     </ul>
                     
                     <h3>Наша миссия</h3>
@@ -114,14 +144,28 @@ h1 {
     padding: 12px 16px;
     background: #f9f9f9;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-@media (max-width: 768px) {
-    .about-content { grid-template-columns: 1fr; gap: 30px; }
-    .about-text h2 { font-size: 24px; }
+.about-text ul li svg {
+    flex-shrink: 0;
 }
 
 @media (max-width: 1024px) { .about-container { padding: 40px 20px; } }
 @media (max-width: 780px) { .about-container { padding: 30px 20px; } }
 @media (max-width: 480px) { .about-container { padding: 20px 15px; } }
+
+@media (max-width: 768px) {
+    .about-content { grid-template-columns: 1fr; gap: 30px; }
+    .about-text h2 { font-size: 24px; }
+    h1 { font-size: 32px; }
+}
+
+@media (max-width: 390px) {
+    h1 { font-size: 28px; }
+    .about-text ul li { font-size: 13px; padding: 10px 12px; }
+    .about-text ul li svg { width: 16px; height: 16px; }
+}
 </style>

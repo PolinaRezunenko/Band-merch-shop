@@ -182,23 +182,16 @@ import { useAuthStore } from '../stores/auth'
 
 export default {
   name: 'AuthModal',
-  props: {
-    isVisible: { type: Boolean, default: false }
-  },
+  props: { isVisible: { type: Boolean, default: false } },
   emits: ['close', 'success'],
   setup(props, { emit }) {
     const activeTab = ref('register')
     const authStore = useAuthStore()
-    const notify = inject('notify', {
-      success: (t, m) => alert(t + ': ' + m),
-      error: (t, m) => alert(t + ': ' + m),
-      info: (t, m) => alert(t + ': ' + m)
-    })
+    const notify = inject('notify', { success: alert, error: alert, info: alert })
     
     const registerData = reactive({
       firstName: '', lastName: '', email: '', phone: '', password: '', confirmPassword: ''
     })
-    
     const loginData = reactive({ email: '', password: '' })
     const forgotPasswordEmail = ref('')
     
@@ -206,6 +199,127 @@ export default {
     const loginLoading = ref(false)
     const forgotPasswordLoading = ref(false)
     const showForgotPassword = ref(false)
+    
+    const errors = ref([])
+    const fieldErrors = reactive({
+      firstName: '', lastName: '', email: '', password: '', confirmPassword: ''
+    })
+
+    const clearErrors = () => {
+      errors.value = []
+      Object.keys(fieldErrors).forEach(k => fieldErrors[k] = '')
+    }
+
+    const validateRegister = () => {
+      clearErrors()
+      let valid = true
+      
+      if (!registerData.firstName.trim()) {
+        fieldErrors.firstName = 'Введите имя'
+        errors.value.push('Введите имя')
+        valid = false
+      } else if (registerData.firstName.trim().length < 2) {
+        fieldErrors.firstName = 'Минимум 2 символа'
+        errors.value.push('Имя должно содержать минимум 2 символа')
+        valid = false
+      }
+      
+      if (!registerData.lastName.trim()) {
+        fieldErrors.lastName = 'Введите фамилию'
+        errors.value.push('Введите фамилию')
+        valid = false
+      } else if (registerData.lastName.trim().length < 2) {
+        fieldErrors.lastName = 'Минимум 2 символа'
+        errors.value.push('Фамилия должна содержать минимум 2 символа')
+        valid = false
+      }
+      
+      if (!registerData.email.trim()) {
+        fieldErrors.email = 'Введите email'
+        errors.value.push('Введите email')
+        valid = false
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerData.email)) {
+        fieldErrors.email = 'Некорректный email'
+        errors.value.push('Введите корректный email')
+        valid = false
+      }
+      
+      if (!registerData.password) {
+        fieldErrors.password = 'Введите пароль'
+        errors.value.push('Введите пароль')
+        valid = false
+      } else {
+        if (registerData.password.length < 8) {
+          fieldErrors.password = 'Минимум 8 символов'
+          errors.value.push('Пароль должен содержать минимум 8 символов')
+          valid = false
+        }
+        if (!/[A-Z]/.test(registerData.password)) {
+          fieldErrors.password = 'Добавьте заглавную букву (A-Z)'
+          errors.value.push('Пароль должен содержать заглавную букву')
+          valid = false
+        }
+        if (!/[a-z]/.test(registerData.password)) {
+          fieldErrors.password = 'Добавьте строчную букву (a-z)'
+          errors.value.push('Пароль должен содержать строчную букву')
+          valid = false
+        }
+        if (!/[0-9]/.test(registerData.password)) {
+          fieldErrors.password = 'Добавьте цифру (0-9)'
+          errors.value.push('Пароль должен содержать цифру')
+          valid = false
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(registerData.password)) {
+          fieldErrors.password = 'Добавьте спецсимвол (!@#$%)'
+          errors.value.push('Пароль должен содержать спецсимвол')
+          valid = false
+        }
+      }
+      
+      if (registerData.password && registerData.password !== registerData.confirmPassword) {
+        fieldErrors.confirmPassword = 'Пароли не совпадают'
+        errors.value.push('Пароли не совпадают')
+        valid = false
+      }
+      
+      return valid
+    }
+
+    const validateLogin = () => {
+      clearErrors()
+      let valid = true
+      
+      if (!loginData.email.trim()) {
+        fieldErrors.email = 'Введите email'
+        errors.value.push('Введите email')
+        valid = false
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginData.email)) {
+        fieldErrors.email = 'Некорректный email'
+        errors.value.push('Введите корректный email')
+        valid = false
+      }
+      
+      if (!loginData.password) {
+        fieldErrors.password = 'Введите пароль'
+        errors.value.push('Введите пароль')
+        valid = false
+      }
+      
+      return valid
+    }
+
+    const closeModal = () => {
+      clearErrors()
+      emit('close')
+    }
+
+    const openForgotPassword = () => {
+      showForgotPassword.value = true
+    }
+
+    const closeForgotPassword = () => {
+      showForgotPassword.value = false
+    }
 
     const formatPhone = (event) => {
       const input = event.target
@@ -223,18 +337,13 @@ export default {
       registerData.phone = formatted
     }
 
-    const closeModal = () => emit('close')
-    const openForgotPassword = () => { showForgotPassword.value = true }
-    const closeForgotPassword = () => { showForgotPassword.value = false }
-
     const handleRegister = async () => {
-      if (!registerData.firstName.trim()) { notify.error('Ошибка', 'Введите имя'); return }
-      if (!registerData.lastName.trim()) { notify.error('Ошибка', 'Введите фамилию'); return }
-      if (!registerData.email.trim()) { notify.error('Ошибка', 'Введите email'); return }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerData.email)) { notify.error('Ошибка', 'Введите корректный email'); return }
-      if (!registerData.password) { notify.error('Ошибка', 'Введите пароль'); return }
-      if (registerData.password !== registerData.confirmPassword) { notify.error('Ошибка', 'Пароли не совпадают'); return }
-      if (registerData.password.length < 6) { notify.error('Ошибка', 'Пароль минимум 6 символов'); return }
+      if (!validateRegister()) {
+        if (errors.value.length > 0) {
+          notify.error('Ошибка регистрации', errors.value[0])
+        }
+        return
+      }
       
       registerLoading.value = true
       try {
@@ -245,8 +354,9 @@ export default {
         })
         
         if (error) {
-          if (error.message.includes('rate limit') || error.status === 429) {
-            notify.error('Лимит превышен', 'Попробуйте позже или другой email'); return
+          if (error.message.includes('already') || error.message.includes('exists')) {
+            notify.error('Ошибка', 'Этот email уже зарегистрирован')
+            return
           }
           throw error
         }
@@ -268,16 +378,21 @@ export default {
           activeTab.value = 'login'
         }
         
-        Object.keys(registerData).forEach(key => registerData[key] = '')
-      } catch (error) {
-        notify.error('Ошибка регистрации', error.message || 'Попробуйте еще раз')
+        Object.keys(registerData).forEach(k => registerData[k] = '')
+      } catch (err) {
+        notify.error('Ошибка регистрации', err.message || 'Попробуйте позже')
       } finally {
         registerLoading.value = false
       }
     }
 
     const handleLogin = async () => {
-      if (!loginData.email || !loginData.password) { notify.error('Ошибка', 'Заполните все поля'); return }
+      if (!validateLogin()) {
+        if (errors.value.length > 0) {
+          notify.error('Ошибка входа', errors.value[0])
+        }
+        return
+      }
       
       loginLoading.value = true
       try {
@@ -285,29 +400,36 @@ export default {
           email: loginData.email, password: loginData.password
         })
         
-        if (error) throw error
+        if (error) {
+          if (error.message.includes('Invalid login') || error.message.includes('Invalid credentials')) {
+            notify.error('Ошибка входа', 'Неверный email или пароль')
+          } else {
+            notify.error('Ошибка', error.message)
+          }
+          return
+        }
         
         authStore.user = data.user
         await authStore.loadProfile()
-        
         notify.success('Добро пожаловать!', 'Вы успешно вошли')
         emit('success')
         closeModal()
         
-        loginData.email = ''; loginData.password = ''
-      } catch (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          notify.error('Ошибка входа', 'Неверный email или пароль')
-        } else {
-          notify.error('Ошибка', error.message)
-        }
+        loginData.email = ''
+        loginData.password = ''
+      } catch (err) {
+        notify.error('Ошибка входа', err.message || 'Попробуйте позже')
       } finally {
         loginLoading.value = false
       }
     }
 
     const handleForgotPassword = async () => {
-      if (!forgotPasswordEmail.value) { notify.error('Ошибка', 'Введите email'); return }
+      if (!forgotPasswordEmail.value) {
+        notify.error('Ошибка', 'Введите email')
+        return
+      }
+      
       forgotPasswordLoading.value = true
       try {
         const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail.value)
@@ -315,8 +437,8 @@ export default {
         notify.success('Готово!', 'Инструкция отправлена на email')
         closeForgotPassword()
         forgotPasswordEmail.value = ''
-      } catch (error) {
-        notify.error('Ошибка', error.message || 'Попробуйте позже')
+      } catch (err) {
+        notify.error('Ошибка', err.message || 'Не удалось отправить')
       } finally {
         forgotPasswordLoading.value = false
       }
@@ -325,6 +447,7 @@ export default {
     return {
       activeTab, registerData, loginData, forgotPasswordEmail,
       registerLoading, loginLoading, forgotPasswordLoading, showForgotPassword,
+      errors, fieldErrors, clearErrors,
       closeModal, openForgotPassword, closeForgotPassword, formatPhone,
       handleRegister, handleLogin, handleForgotPassword
     }

@@ -13,21 +13,35 @@
                     
                     <div class="contact-items">
                         <div class="contact-item">
-                            <span class="contact-icon">📧</span>
+                            <span class="contact-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                    <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </svg>
+                            </span>
                             <div>
                                 <strong>Email</strong>
                                 <p>support@bmth-store.ru</p>
                             </div>
                         </div>
                         <div class="contact-item">
-                            <span class="contact-icon">📱</span>
+                            <span class="contact-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 16.92V19C22.001 19.4956 21.8843 19.9845 21.6605 20.423C21.4366 20.8615 21.1121 21.2357 20.7158 21.5118C20.3195 21.7879 19.8643 21.9571 19.3875 22.0047C18.9108 22.0523 18.4289 21.9767 17.99 21.784C10.49 18.9 5.10001 13.51 2.22001 6.01C2.0275 5.57102 1.95199 5.0891 1.99967 4.61235C2.04736 4.1356 2.21663 3.68052 2.49284 3.28425C2.76905 2.88798 3.14337 2.56359 3.58201 2.33983C4.02065 2.11606 4.5097 1.9995 5.00501 2.00001H7.00501C7.74499 1.99346 8.45693 2.30655 8.96301 2.8628C9.46909 3.41905 9.72278 4.16241 9.66001 4.90501C9.51846 6.61514 9.09199 8.28617 8.40001 9.86001" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </svg>
+                            </span>
                             <div>
                                 <strong>Telegram / VK</strong>
                                 <p>@bmth_store</p>
                             </div>
                         </div>
                         <div class="contact-item">
-                            <span class="contact-icon">📍</span>
+                            <span class="contact-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                    <path d="M12 11.5C13.3807 11.5 14.5 10.3807 14.5 9C14.5 7.61929 13.3807 6.5 12 6.5C10.6193 6.5 9.5 7.61929 9.5 9C9.5 10.3807 10.6193 11.5 12 11.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </svg>
+                            </span>
                             <div>
                                 <strong>Адрес</strong>
                                 <p>г. Владивосток, ул. Примерная, д. 1</p>
@@ -41,7 +55,10 @@
                     <h2>Форма обратной связи</h2>
                     
                     <div v-if="success" class="success-message">
-                        ✅ Сообщение отправлено! Мы свяжемся с вами в ближайшее время.
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="#008000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Сообщение отправлено! Мы свяжемся с вами в ближайшее время.
                     </div>
                     
                     <form @submit.prevent="submitForm">
@@ -117,10 +134,10 @@ export default {
 
 <style scoped>
 .contacts-page { background: #fff; min-height: 100vh; }
-.contacts-container { max-width: 1200px; margin: 0 auto;  }
+.contacts-container { max-width: 1200px; margin: 0 auto; }
 
 h1 {
-     font-family: 'Raleway', sans-serif; 
+    font-family: 'Raleway', sans-serif; 
     color: #0a0a0a; 
     margin-top: 30px;
     margin-bottom: 30px; 
@@ -163,8 +180,11 @@ h2 {
 }
 
 .contact-icon {
-    font-size: 28px;
     flex-shrink: 0;
+}
+
+.contact-icon svg {
+    stroke: #000;
 }
 
 .contact-item strong {
@@ -198,6 +218,10 @@ h2 {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .form-group {
@@ -249,8 +273,20 @@ button[type="submit"] {
 button[type="submit"]:hover { background: #333; }
 button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
 
+@media (max-width: 1024px) { .contacts-container { padding: 40px 20px; } }
+@media (max-width: 780px) { .contacts-container { padding: 30px 20px; } }
+@media (max-width: 480px) { .contacts-container { padding: 20px 15px; } }
+
 @media (max-width: 768px) {
     .contacts-layout { grid-template-columns: 1fr; gap: 40px; }
     .contacts-form { padding: 25px; }
+    h1 { font-size: 32px; }
+}
+
+@media (max-width: 390px) {
+    h1 { font-size: 28px; }
+    .contacts-form { padding: 20px; }
+    .contact-item { gap: 10px; }
+    .contact-icon svg { width: 22px; height: 22px; }
 }
 </style>

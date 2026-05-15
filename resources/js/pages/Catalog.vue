@@ -186,7 +186,6 @@ export default {
         breadcrumbs() {
             const crumbs = []
             
-            // Если активен фильтр коллекции
             if (this.activeFilters.collections.length > 0) {
                 const colSlug = this.activeFilters.collections[0]
                 const col = this.collections.find(c => c.slug === colSlug)
@@ -195,7 +194,6 @@ export default {
                 }
             }
             
-            // Если активен фильтр категории
             if (this.activeFilters.categories.length > 0) {
                 const catSlug = this.activeFilters.categories[0]
                 const cat = this.categories.find(c => c.slug === catSlug)
@@ -204,7 +202,6 @@ export default {
                 }
             }
             
-            // Если нет активных фильтров - просто "Каталог"
             if (crumbs.length === 0) {
                 crumbs.push({ label: 'Каталог', link: null })
             }
@@ -243,11 +240,9 @@ export default {
         applyFilterFromUrl() {
             const path = this.$route.path
             
-            // Сброс фильтров
             this.activeFilters.collections = []
             this.activeFilters.categories = []
             
-            // Проверяем коллекции
             const collectionSlugs = ['thats-the-spirit', 'post-human', 'eras', 'tour']
             for (const slug of collectionSlugs) {
                 if (path.includes('/catalog/' + slug)) {
@@ -256,7 +251,6 @@ export default {
                 }
             }
             
-            // Проверяем категории
             const categorySlugs = ['t-shirts', 'hoodies', 'accessories', 'vinyl', 'cd']
             for (const slug of categorySlugs) {
                 if (path.includes('/catalog/' + slug)) {
@@ -310,8 +304,6 @@ export default {
 
 <style scoped>
 /* HERO */
-
-
 .catalog-hero {
     height: 400px;
     background-size: cover;
@@ -346,7 +338,6 @@ export default {
     letter-spacing: 5px;
     margin: 0;
 }
-/* ПОЛУКРУГЛЫЙ РАЗДЕЛИТЕЛЬ */
 .hero-divider {
     position: absolute;
     bottom: -40px;
@@ -368,7 +359,6 @@ export default {
     z-index: 4;
 }
 
-/* Хлебные крошки - поверх разделителя */
 .catalog-container :deep(.breadcrumbs) {
     position: relative;
     z-index: 5;
@@ -503,12 +493,11 @@ export default {
     border-color: #000;
 }
 
-/* Товары */
+/* Товары - 3 колонки на десктопе */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    justify-items: center;
 }
 .empty {
     text-align: center;
@@ -538,21 +527,26 @@ export default {
 .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
 .pagination button:hover:not(:disabled):not(.active) { border-color: #000; }
 
-/* Адаптивность */
+/* ========== АДАПТИВ ========== */
+
+/* Планшеты (1024px) - 3 колонки */
 @media (max-width: 1024px) {
+    .catalog-container { padding: 0 20px; }
     .catalog-layout {
         grid-template-columns: 220px 1fr;
         gap: 30px;
     }
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
     }
-    .catalog-hero-title {
-        font-size: 62px;
-    }
+    .catalog-hero-title { font-size: 56px; }
+    .catalog-hero { height: 350px; }
 }
 
+/* Планшеты вертикально (780px) - 2 колонки! */
 @media (max-width: 780px) {
+    .catalog-container { padding: 0 20px; }
     .catalog-layout {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -560,166 +554,89 @@ export default {
     
     .filters-sidebar {
         padding: 20px;
+        margin-top: 0;
     }
     
-    .filter-group {
+    .filter-group h4 {
+        font-size: 20px;
         margin-bottom: 20px;
-        padding-bottom: 20px;
     }
     
-    .catalog-hero-content {
-        padding-left: 30px;
-        padding-bottom: 30px;
+    /* ВАЖНО: 2 колонки на мобильных */
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
     
-    .catalog-hero-title {
-        font-size: 56px;
-        margin-top: 200px;
-    }
-}
-
-@media (max-width: 640px) {
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-    .catalog-hero-title {
-        font-size: 48px;
-        margin-top: 180px;
-    }
-    .catalog-hero-content {
-        padding-left: 20px;
-        padding-bottom: 20px;
-    }
-}
-
-/* 1920px */
-@media (min-width: 1920px) {
-    .hero-divider {
-        width: 1920px;
-    }
-}
-
-/* 1440px */
-@media (min-width: 1440px) and (max-width: 1919px) {
-    .hero-divider {
-        width: 1920px;
-    }
-}
-
-/* 1200px */
-@media (min-width: 1200px) and (max-width: 1439px) {
-    .hero-divider {
-        width: 900px;
-    }
-}
-
-/* 1024px (планшеты горизонтально) */
-@media (min-width: 1024px) and (max-width: 1199px) {
-    .hero-divider {
-        width: 760px;
-    }
-}
-
-/* 768px (планшеты вертикально) */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .hero-divider {
-        width: 90%;
-        height: 60px;
-        bottom: -30px;
-        border-radius: 40px;
-    }
-}
-
-/* 480px (большие телефоны) */
-@media (min-width: 480px) and (max-width: 767px) {
-    .hero-divider {
-        width: 92%;
-        height: 50px;
-        bottom: -25px;
-        border-radius: 30px;
-    }
-}
-
-/* 320px (маленькие телефоны) */
-@media (max-width: 479px) {
-    .hero-divider {
-        width: 94%;
-        height: 40px;
-        bottom: -20px;
-        border-radius: 25px;
-    }
-}
-
-
-/* Мобильная адаптация Каталога */
-@media (max-width: 768px) {
-    .catalog-hero {
-        height: 300px; /* Уменьшаем высоту баннера */
-    }
-    .catalog-hero-content {
-        padding-left: 20px !important; /* Прижимаем заголовок к левому краю */
-    }
-    .catalog-hero-title {
-        font-size: 36px !important; /* Уменьшаем размер заголовка */
-    }
-    .catalog-layout {
-        display: flex;
-        flex-direction: column; /* Фильтры уезжают наверх списка */
-    }
-    .products-grid {
-        grid-template-columns: 1fr 1fr; /* Два товара в ряд на планшетах */
-    }
-    
-}
-
-/* Для маленьких телефонов (320-480px) */
-@media (max-width: 480px) {
-    .products-grid {
-        grid-template-columns: 1fr; /* Один товар в ряд на телефонах */
-    }
-    .catalog-hero-title {
-        font-size: 28px !important; /* Еще меньше для узких экранов */
-    }
-    .filters-sidebar {
-        position: static; /* Убираем прилипание фильтров */
-    }
-}
-
-/* Адаптив заголовка каталога */
-@media (max-width: 1200px) {
-    .catalog-hero { height: 350px; }
-    .catalog-hero-title { font-size: 56px; }
-}
-
-@media (max-width: 1024px) {
-    .catalog-hero { height: 300px; }
-    .catalog-hero-content { padding-left: 20px; padding-bottom: 40px; }
-    .catalog-hero-title { font-size: 48px; }
-    .hero-divider { height: 60px; bottom: -30px; border-radius: 40px; }
-}
-
-@media (max-width: 780px) {
-    .catalog-hero { height: 250px; }
+    .catalog-hero { height: 280px; }
     .catalog-hero-content { padding-left: 20px; padding-bottom: 30px; }
-    .catalog-hero-title { font-size: 38px; }
+    .catalog-hero-title { font-size: 42px; }
     .hero-divider { height: 50px; bottom: -25px; border-radius: 35px; }
 }
 
+/* Мобильные телефоны (480px) - 2 колонки */
 @media (max-width: 480px) {
-    .catalog-hero { height: 200px; }
-    .catalog-hero-content { padding-left: 20px; padding-bottom: 25px; }
-    .catalog-hero-title { font-size: 28px; }
+    .catalog-container { padding: 0 12px; }
+    
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .filter-group h4 {
+        font-size: 18px;
+    }
+    
+    .sort-row {
+        font-size: 12px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .sort-row select {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .catalog-hero { height: 220px; }
+    .catalog-hero-title { font-size: 32px; letter-spacing: 3px; }
     .hero-divider { height: 40px; bottom: -20px; border-radius: 25px; }
+    
+    .pagination button {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
 }
 
+/* Очень маленькие (390px) - всё ещё 2 колонки */
 @media (max-width: 390px) {
+    .catalog-container { padding: 0 10px; }
+    
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .filter-group h4 {
+        font-size: 16px;
+    }
+    
+    .filter-checkbox {
+        font-size: 12px;
+    }
+    
+    .reset-filters-btn {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
     .catalog-hero { height: 180px; }
-    .catalog-hero-content { padding-left: 15px; padding-bottom: 20px; }
-    .catalog-hero-title { font-size: 24px; }
+    .catalog-hero-title { font-size: 24px; letter-spacing: 2px; }
     .hero-divider { height: 35px; bottom: -18px; border-radius: 20px; }
+    
+    .sort-row span {
+        font-size: 11px;
+    }
 }
-
-@media (max-width: 1024px) { .catalog-container { padding: 0 20px; } }
-@media (max-width: 780px) { .catalog-container { padding: 0 20px; } }
-@media (max-width: 480px) { .catalog-container { padding: 0 15px; } }
 </style>

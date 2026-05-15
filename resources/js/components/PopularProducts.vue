@@ -27,7 +27,7 @@ export default {
         },
         filter: {
             type: String,
-            default: 'all'  // 'all', 'hot', 'new'
+            default: 'all'
         },
         limit: {
             type: Number,
@@ -92,20 +92,20 @@ export default {
     background: #000000;
 }
 
+/* 4 колонки на десктопе */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
-/* Адаптив для PopularProducts */
+/* Адаптив */
 @media (max-width: 1024px) {
     .section-popular { padding: 3rem 20px; }
     .section-title { font-size: 32px; }
     .products-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 16px;
-        padding: 0;
     }
 }
 
@@ -115,7 +115,6 @@ export default {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        padding: 0;
     }
 }
 
@@ -123,9 +122,17 @@ export default {
     .section-popular { padding: 2rem 15px; }
     .section-title { font-size: 24px; }
     .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        padding: 0;
+    }
+}
+
+@media (max-width: 390px) {
+    .section-popular { padding: 1.5rem 12px; }
+    .section-title { font-size: 20px; }
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 }
 </style>

@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="order-items">
                                     <div v-for="item in order.order_items" :key="item.id" class="order-item">
-                                        <img :src="item.image_url" :alt="item.product_name">
+                                        <img :src="item.image_url" :alt="item.product_name" loading="lazy">
                                         <span>{{ item.product_name }}</span>
                                         <span>{{ item.quantity }} шт.</span>
                                         <span>{{ item.price?.toLocaleString() }} ₽</span>
@@ -159,6 +159,7 @@ import { useFavoritesStore } from '../stores/favorites'
 import { supabase } from '../config/supabase'
 import Breadcrumbs from '../components/Breadcrumbs.vue'
 import ProductCard from '../components/ProductCard.vue'
+
 
 export default {
     name: 'ProfilePage',

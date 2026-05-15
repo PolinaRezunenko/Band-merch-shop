@@ -2,18 +2,16 @@ User-agent: *
 Allow: /
 
 # Запрет технических страниц
+User-agent: *
 Disallow: /cart
 Disallow: /checkout
 Disallow: /profile
 Disallow: /admin
-Disallow: /favorites
 Disallow: /forbidden
-Disallow: /login
-Disallow: /register
-Disallow: /forgot-password
 
-# Указание главного зеркала сайта (замените на ваш домен)
-Host: https://band-merch.ru
 
-# Путь до файла Sitemap.xml (замените на ваш домен)
-Sitemap: https://band-merch.ru/sitemap.xml
+# Указание главного зеркала сайта
+Host: https://bmth-store.onrender.com
+
+# Путь до файла Sitemap.xml
+Sitemap: https://bmth-store.onrender.com/sitemap.xml

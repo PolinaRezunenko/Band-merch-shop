@@ -1,13 +1,11 @@
 <template>
     <div class="cart-page">
         <div class="cart-container">
-            <!-- Хлебные крошки -->
             <Breadcrumbs :items="breadcrumbs" />
 
             <h1 class="cart-title">Корзина</h1>
 
             <div class="cart-layout" v-if="cartItems.length > 0">
-                <!-- Список товаров -->
                 <div class="cart-items">
                     <div class="cart-header">
                         <button class="btn-clear" @click="clearCart">Очистить корзину</button>
@@ -22,7 +20,6 @@
                     />
                 </div>
 
-                <!-- Итого -->
                 <div class="cart-summary">
                     <div class="summary-block">
                         <div class="summary-row">
@@ -51,16 +48,27 @@
                     </div>
 
                     <div class="free-shipping" v-if="totalPrice < 5000">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8V12L15 15" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
                         Добавьте в корзину товаров на {{ (5000 - totalPrice).toLocaleString() }} ₽ и получите бесплатную доставку
                     </div>
                     <div class="free-shipping-success" v-else>
-                        ✅ У вас бесплатная доставка!
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="#00aa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        У вас бесплатная доставка!
                     </div>
                 </div>
             </div>
 
-            <!-- Пустая корзина -->
             <div v-else class="cart-empty">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20Z" stroke="#999" stroke-width="2" fill="none"/>
+                    <path d="M18 20C18 20.5523 17.5523 21 17 21C16.4477 21 16 20.5523 16 20C16 19.4477 16.4477 19 17 19C17.5523 19 18 19.4477 18 20Z" stroke="#999" stroke-width="2" fill="none"/>
+                </svg>
                 <p>Корзина пуста</p>
                 <router-link to="/catalog" class="btn-to-catalog">Перейти в каталог</router-link>
             </div>
@@ -120,7 +128,6 @@ export default {
 .cart-container {
     max-width: 1200px;
     margin: 0 auto;
-    /* padding: 40px 20px; */
 }
 
 .cart-title {
@@ -128,7 +135,6 @@ export default {
     color: #000;
     margin: 30px 0;
     font-size: 48px;
-
 }
 
 .cart-layout {
@@ -138,7 +144,6 @@ export default {
     align-items: start;
 }
 
-/* Заголовок корзины */
 .cart-header {
     display: flex;
     justify-content: flex-end;
@@ -160,7 +165,6 @@ export default {
     color: #000;
 }
 
-/* Итого */
 .cart-summary {
     position: sticky;
     top: 120px;
@@ -269,6 +273,10 @@ export default {
     font-size: 14px;
     text-align: center;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .free-shipping-success {
@@ -277,15 +285,22 @@ export default {
     font-size: 14px;
     text-align: center;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-/* Пустая корзина */
 .cart-empty {
     text-align: center;
     padding: 80px 20px;
     font-family: 'Inter', sans-serif;
     font-size: 18px;
     color: #999;
+}
+
+.cart-empty svg {
+    margin-bottom: 20px;
 }
 
 .btn-to-catalog {
@@ -306,134 +321,29 @@ export default {
     background: #333;
 }
 
-@media (max-width: 768px) {
-    .cart-layout {
-        grid-template-columns: 1fr;
-    }
-    
-    .cart-summary {
-        position: static;
-    }
-    
-    .cart-title {
-        font-size: 28px;
-    }
-}
-
 @media (max-width: 1024px) { .cart-container { padding: 40px 20px; } }
 @media (max-width: 780px) { .cart-container { padding: 30px 20px; } }
 @media (max-width: 480px) { .cart-container { padding: 20px 15px; } }
 
-/* Корзина на маленьких экранах */
+@media (max-width: 768px) {
+    .cart-layout { grid-template-columns: 1fr; }
+    .cart-summary { position: static; }
+    .cart-title { font-size: 32px; }
+}
+
 @media (max-width: 480px) {
-    .cart-layout {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .cart-summary {
-        position: static;
-    }
-    
-    .summary-block {
-        padding: 20px;
-    }
-    
-    .cart-title {
-        font-size: 24px;
-    }
-    
-    .btn-checkout {
-        padding: 14px;
-        font-size: 13px;
-    }
+    .cart-layout { gap: 20px; }
+    .summary-block { padding: 20px; }
+    .cart-title { font-size: 24px; }
+    .btn-checkout { padding: 14px; font-size: 13px; }
+    .coupon-block { flex-direction: column; gap: 8px; }
+    .btn-coupon { width: 100%; text-align: center; }
 }
 
 @media (max-width: 390px) {
-    .cart-item {
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 10px;
-    }
-    
-    .cart-item-image {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .cart-item-name {
-        font-size: 13px;
-    }
-    
-    .cart-item-price {
-        font-size: 14px;
-    }
-    
-    .cart-item-prices {
-        text-align: left;
-        min-width: auto;
-        width: 100%;
-    }
-    
-    .btn-remove {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-    }
-    
-    .cart-item {
-        position: relative;
-    }
-    
-    .coupon-block {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .btn-coupon {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-@media (max-width: 325px) {
-    .cart-container {
-        padding: 20px 10px;
-    }
-    
-    .cart-title {
-        font-size: 22px;
-    }
-    
-    .cart-item {
-        gap: 8px;
-        padding: 8px;
-    }
-    
-    .cart-item-image {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .cart-item-name {
-        font-size: 12px;
-    }
-    
-    .cart-item-price {
-        font-size: 13px;
-    }
-    
-    .summary-total {
-        font-size: 16px;
-    }
-    
-    .total-price {
-        font-size: 20px;
-    }
-    
-    .btn-checkout {
-        padding: 12px;
-        font-size: 12px;
-    }
+    .cart-container { padding: 20px 10px; }
+    .cart-title { font-size: 22px; }
+    .cart-empty svg { width: 48px; height: 48px; }
+    .free-shipping, .free-shipping-success { font-size: 12px; }
 }
 </style>

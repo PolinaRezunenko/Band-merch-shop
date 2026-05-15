@@ -77,11 +77,11 @@ h1 {
     margin-bottom: 40px;
 }
 
+/* 4 колонки на десктопе */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    justify-items: center;
 }
 
 .empty {
@@ -108,30 +108,40 @@ h1 {
 .btn-catalog:hover { background: #333; }
 
 @media (max-width: 1024px) {
-   .products-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
+    .new-products-container { padding: 40px 20px; }
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
         gap: 16px;
-        padding: 0 20px;
     }
+    h1 { font-size: 40px; }
 }
 
 @media (max-width: 780px) {
+    .new-products-container { padding: 30px 20px; }
     .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        padding: 0 15px;
     }
+    h1 { font-size: 32px; }
+    .subtitle { font-size: 14px; margin-bottom: 30px; }
 }
 
 @media (max-width: 480px) {
+    .new-products-container { padding: 20px 15px; }
     .products-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        padding: 0 10px;
     }
+    h1 { font-size: 28px; margin: 20px 0; }
+    .subtitle { font-size: 13px; margin-bottom: 20px; }
 }
 
-@media (max-width: 1024px) { .new-products-container { padding: 40px 20px; } }
-@media (max-width: 780px) { .new-products-container { padding: 30px 20px; } }
-@media (max-width: 480px) { .new-products-container { padding: 20px 15px; } }
+@media (max-width: 390px) {
+    .new-products-container { padding: 15px 12px; }
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    h1 { font-size: 24px; }
+}
 </style>

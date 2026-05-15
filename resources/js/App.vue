@@ -58,13 +58,14 @@
                     </router-link>
                     <p>Ваш поставщик в мир лимитированного ассортимента с доставкой по всему миру</p>
                     <div class="social-links">
-                        <a href="https://t.me/ecosavonry" class="social-link telegram" target="_blank">
+                        <a href="https://t.me/bmthofficial" class="social-link telegram" target="_blank">
                             <img src="/images/icons/tg.svg" alt="tg" >
                         </a>
-                        <a href="https://vk.com/savonry_beauty" class="social-link vk" target="_blank">
+                        <a href="https://vk.com/bmthfamilyru" class="social-link vk" target="_blank">
                             <img src="/images/icons/vk.svg" alt="vk">
                         </a>
                     </div>
+                    
                 </div>
                 <div class="footer-col">
                     <h4>Каталог</h4>

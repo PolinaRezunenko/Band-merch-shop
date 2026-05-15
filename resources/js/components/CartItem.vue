@@ -1,7 +1,7 @@
 <template>
     <div class="cart-item">
         <router-link :to="'/product/' + item.id" class="cart-item-image-link">
-            <img :src="itemImage" :alt="item.name" class="cart-item-image" @error="handleImageError">
+            <img :src="itemImage" :alt="item.name" loading="lazy" class="cart-item-image" @error="handleImageError">
         </router-link>
         
         <div class="cart-item-info">

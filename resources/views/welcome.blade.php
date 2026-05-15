@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="preload" href="/images/hero-bg.png" as="image">
+    <link rel="preload" href="/images/catalog-hero-bg.png" as="image">
+    <link rel="preload" href="/images/discount-bg.png" as="image">
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 

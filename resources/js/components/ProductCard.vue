@@ -40,14 +40,16 @@
             <span class="product-price">{{ formatPrice(product.price) }} ₽</span>
             
             <!-- Кнопка В корзину -->
-            <button v-if="quantity === 0" class="btn-add" @click="increaseQuantity">
-                В корзину
-            </button>
-            <!-- Счётчик -->
-            <div v-else class="btn-add-counter">
-                <button class="counter-btn" @click="decreaseQuantity">−</button>
-                <span class="counter-text">В корзине {{ quantity }}</span>
-                <button class="counter-btn" @click="increaseQuantity">+</button>
+            <div class="product-action">
+                <button v-if="quantity === 0" class="btn-add" @click="increaseQuantity">
+                    В корзину
+                </button>
+                <!-- Счётчик -->
+                <div v-else class="btn-add-counter">
+                    <button class="counter-btn" @click="decreaseQuantity">−</button>
+                    <span class="counter-text">В корзине {{ quantity }}</span>
+                    <button class="counter-btn" @click="increaseQuantity">+</button>
+                </div>
             </div>
         </div>
     </div>
@@ -109,7 +111,7 @@ export default {
             }
         },
         handleImageError(event) {
-            event.target.src = 'https://placehold.co/600x600/f5f5f5/0a0a0a?text=Нет+фото'
+            event.target.src = 'https://placehold.co/400x400/f5f5f5/0a0a0a?text=Нет+фото'
             event.target.alt = 'Изображение недоступно'
         },
         checkFavorite() {
@@ -164,8 +166,6 @@ export default {
 <style scoped>
 .product-card {
     position: relative;
-    width: 284px;
-    height: 490px;
     background: #fff;
     padding: 10px;
     display: flex;
@@ -173,6 +173,9 @@ export default {
     transition: transform 0.3s;
     border: 1px solid #D6D6D6;
     border-radius: 13px;
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
 }
 
 .product-card:hover {
@@ -192,10 +195,12 @@ export default {
 
 .badge {
     font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0px;
     width: fit-content;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .badge-new {
@@ -246,25 +251,25 @@ export default {
 }
 
 .action-icon {
-    height: 28px;
-    width: 28px;
+    height: 24px;
+    width: 24px;
 }
 
 /* Фото */
 .product-image-link {
     display: block;
-    width: 244px;
-    height: 256px;
-    margin: 64px auto 10px;
-    overflow: hidden; /* ← обрезает всё что выходит за рамки */
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 45px auto 10px;
+    overflow: hidden;
     flex-shrink: 0;
 }
 
 .product-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ← обрезает и центрирует */
-    object-position: center top; /* ← фокус на верхней части (для футболок) */
+    object-fit: cover;
+    object-position: center top;
     transition: transform 0.5s;
     background: #f5f5f5;
 }
@@ -273,10 +278,10 @@ export default {
     transform: scale(1.05);
 }
 
-/* Инфо */
+/* Инфо - растягивается на всю доступную высоту */
 .product-info {
     text-align: center;
-    width: 244px;
+    width: 100%;
     margin: 0 auto;
     flex: 1;
     display: flex;
@@ -286,16 +291,16 @@ export default {
 .product-name {
     display: block;
     font-family: 'Roboto Mono';
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: #0a0a0a;
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: -2%;
-    width: 233px;
-    height: 42px;
     overflow: hidden;
-    margin: 0 auto 8px;
+    margin: 0 auto 6px;
+    line-height: 1.3;
+    max-height: 42px;
 }
 
 .product-name:hover {
@@ -305,28 +310,28 @@ export default {
 .product-price {
     display: block;
     font-family: 'Roboto Mono';
-    font-size: 16px;
+    font-size: 14px;
     color: #0a0a0a;
     font-weight: 400;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
-/* Кнопка В корзину и счётчик — прижаты к низу */
-.btn-add,
-.btn-add-counter {
+/* Контейнер для кнопки - прижимается к низу */
+.product-action {
     margin-top: auto;
+    width: 100%;
 }
 
 /* Кнопка В корзину */
 .btn-add {
-    width: 244px;
-    height: 44px;
+    width: 100%;
+    padding: 10px;
     background: transparent;
     color: #000000;
     border: 1px solid black;
     border-radius: 5px;
     font-family: 'Roboto Mono';
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0px;
@@ -341,13 +346,13 @@ export default {
 
 /* Счётчик "В корзине" */
 .btn-add-counter {
-    width: 244px;
-    height: 44px;
+    width: 100%;
+    padding: 8px 10px;
     background: #0a0a0a;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
+    gap: 8px;
     border-radius: 5px;
 }
 
@@ -372,8 +377,174 @@ export default {
 .counter-text {
     color: #fff;
     font-family: 'Roboto Mono';
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+/* ========== АДАПТИВ ========== */
+
+/* Планшеты */
+@media (max-width: 1024px) {
+    .product-card {
+        min-height: 360px;
+    }
+    .product-name {
+        font-size: 13px;
+    }
+    .product-price {
+        font-size: 13px;
+    }
+}
+
+/* Мобильные (780px) */
+@media (max-width: 780px) {
+    .product-card {
+        min-height: 340px;
+        padding: 8px;
+    }
+    
+    .product-image-link {
+        margin: 40px auto 8px;
+    }
+    
+    .product-name {
+        font-size: 12px;
+        max-height: 36px;
+        margin-bottom: 4px;
+    }
+    
+    .product-price {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .btn-add {
+        padding: 8px;
+        font-size: 11px;
+    }
+    
+    .btn-add-counter {
+        padding: 6px 8px;
+    }
+    
+    .counter-text {
+        font-size: 10px;
+    }
+    
+    .counter-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .badge {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+    
+    .action-icon {
+        height: 20px;
+        width: 20px;
+    }
+    
+    .btn-favorite, .btn-quick-add {
+        height: 24px;
+        width: 24px;
+    }
+}
+
+/* Маленькие телефоны (480px) */
+@media (max-width: 480px) {
+    .product-card {
+        min-height: 320px;
+        padding: 6px;
+    }
+    
+    .product-image-link {
+        margin: 35px auto 6px;
+    }
+    
+    .product-name {
+        font-size: 11px;
+        max-height: 32px;
+    }
+    
+    .product-price {
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+    
+    .btn-add {
+        padding: 6px;
+        font-size: 10px;
+    }
+    
+    .counter-text {
+        font-size: 9px;
+    }
+    
+    .counter-btn {
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+    }
+}
+
+/* Очень маленькие (390px) */
+@media (max-width: 390px) {
+    .product-card {
+        min-height: 250px;
+        padding: 5px;
+    }
+    
+    .product-image-link {
+        margin: 30px auto 5px;
+    }
+    
+    .product-name {
+        font-size: 10px;
+        max-height: 28px;
+        line-height: 1.2;
+    }
+    
+    .product-price {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+    
+    .product-action {
+        margin-top: auto;
+    }
+    
+    .btn-add {
+        padding: 5px;
+        font-size: 9px;
+    }
+    
+    .counter-text {
+        font-size: 8px;
+    }
+    
+    .counter-btn {
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+    }
+    
+    .badge {
+        font-size: 9px;
+        padding: 1px 3px;
+    }
+    
+    .action-icon {
+        height: 18px;
+        width: 18px;
+    }
+    
+    .btn-favorite, .btn-quick-add {
+        height: 22px;
+        width: 22px;
+    }
 }
 </style>

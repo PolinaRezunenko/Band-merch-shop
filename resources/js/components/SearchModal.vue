@@ -25,7 +25,7 @@
                             class="result-item"
                             @click="goToProduct(product.id)"
                         >
-                            <img :src="getProductImage(product)" :alt="product.name" class="result-image" @error="handleImageError">
+                            <img :src="getProductImage(product)" :alt="product.name" loading="lazy" class="result-image" @error="handleImageError">
                             <div class="result-info">
                                 <span class="result-name">{{ product.name }}</span>
                                 <span class="result-price">{{ product.price.toLocaleString() }} ₽</span>

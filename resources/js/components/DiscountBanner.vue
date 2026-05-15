@@ -1,5 +1,5 @@
 <template>
-    <section class="discount-banner" style="background-image: url('/images/discount-bg.png')">
+    <section class="discount-banner" style="background-image: url('/images/discount-bg.png')" loading="lazy">
         <div class="discount-overlay"></div>
         <div class="discount-container">
             <h3>Скидка 7%</h3>
