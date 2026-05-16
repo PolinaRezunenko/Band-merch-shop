@@ -514,7 +514,7 @@ export default {
 <style scoped>
 .admin-page { background: #fff; min-height: 100vh; }
 .admin-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-h1 { font-family: 'Zen Antique', serif; font-size: 36px; margin: 30px 0; }
+h1 { font-family: 'Raleway', sans-serif; font-size: 36px; margin: 30px 0; }
 
 .admin-layout { display: grid; grid-template-columns: 220px 1fr; gap: 40px; }
 .admin-sidebar { position: sticky; top: 120px; }

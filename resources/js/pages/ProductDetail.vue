@@ -11,7 +11,6 @@
             <div class="product-layout">
                 <!-- Левая колонка: Галерея -->
                 <div class="product-gallery-col">
-                    <!-- Главное изображение -->
                     <div class="main-image-wrapper">
                         <img 
                             :src="currentImage" 
@@ -22,7 +21,6 @@
                         >
                     </div>
 
-                    <!-- Слайдер миниатюр -->
                     <div class="thumbnail-slider" v-if="productImages.length > 1">
                         <button 
                             v-for="(img, index) in productImages" 
@@ -43,19 +41,14 @@
 
                 <!-- Правая колонка: Информация -->
                 <div class="product-info-col">
-                    <!-- Название -->
                     <h1 class="product-title">{{ product.name }}</h1>
-                    
-                    <!-- Описание -->
                     <p class="product-description">{{ product.description }}</p>
                     
-                    <!-- Характеристики -->
                     <div class="product-details" v-if="product.category_id === 1 || product.category_id === 2">
-                        <p>100 % хлопок.</p>
-                        <p>Стирка при 30 °C с вещами похожего цвета. Не сушить в стиральной машине. Гладить с изнаночной стороны на низкой температуре.</p>
+                        <p>100% хлопок.</p>
+                        <p>Стирка при 30°C с вещами похожего цвета. Не сушить в стиральной машине. Гладить с изнаночной стороны на низкой температуре.</p>
                     </div>
 
-                    <!-- Таблица размеров (только для одежды) -->
                     <div class="size-guide" v-if="product.category_id === 1 || product.category_id === 2">
                         <button @click="showSizeTable = !showSizeTable" class="size-table-link">
                             Таблица размеров {{ showSizeTable ? '▲' : '▼' }}
@@ -95,7 +88,6 @@
                         </div>
                     </div>
 
-                    <!-- Выбор размера -->
                     <div class="product-size" v-if="product.sizes && product.sizes.length > 0 && product.sizes[0] !== 'Универсальный'">
                         <h4>Размер</h4>
                         <div class="size-options">
@@ -110,7 +102,6 @@
                         </div>
                     </div>
 
-                    <!-- Цена и корзина -->
                     <div class="product-price-block">
                         <div class="price-row">
                             <span class="current-price">{{ formatPrice(product.price) }} ₽</span>
@@ -118,7 +109,6 @@
                         </div>
                     </div>
 
-                    <!-- Действия -->
                     <div class="product-actions">
                         <QuantityCounter v-model="quantity" />
                         <button class="btn-add-to-cart" @click="addToCart">
@@ -126,7 +116,6 @@
                         </button>
                     </div>
 
-                    <!-- Доставка -->
                     <div class="delivery-info">
                         <p>🚚 Бесплатная доставка при заказе от 5 000 ₽</p>
                         <p>📦 Доставка: 3-7 рабочих дней</p>
@@ -135,10 +124,7 @@
             </div>
         </div>
 
-        <!-- Самое популярное -->
         <PopularProducts />
-        
-        <!-- Скидка -->
         <DiscountBanner />
     </div>
     
@@ -234,19 +220,37 @@ export default {
         await this.loadProduct()
         window.scrollTo(0, 0)
     },
+    watch: {
+        // ⚠️ ВАЖНО: Следим за изменением ID в URL
+        '$route.params.id': {
+            handler(newId, oldId) {
+                if (newId !== oldId) {
+                    console.log('ID изменился, загружаем новый товар:', newId)
+                    this.loadProduct()
+                    window.scrollTo(0, 0)
+                }
+            },
+            immediate: false
+        }
+    },
     methods: {
         async loadProduct() {
+            this.loading = true
             try {
+                const productId = this.$route.params.id
+                console.log('Загрузка товара с ID:', productId)
+                
                 const { data: productData, error: productError } = await supabase
                     .from('products')
                     .select('*, collections(name)')
-                    .eq('id', this.$route.params.id)
+                    .eq('id', productId)
                     .single()
                 
                 if (productError) throw productError
                 
                 if (productData) {
                     this.product = productData
+                    this.currentImageIndex = 0 // Сброс индекса изображения
                     
                     if (productData.collections) {
                         this.product.collection_name = productData.collections.name
@@ -257,6 +261,9 @@ export default {
                     if (productData.sizes && productData.sizes.length > 0) {
                         this.selectedSize = productData.sizes[0]
                     }
+                    
+                    // Сброс количества
+                    this.quantity = 1
                 }
             } catch (err) {
                 console.error('Ошибка загрузки товара:', err)
@@ -383,6 +390,7 @@ export default {
     display: flex;
     gap: 16px;
     justify-content: flex-start;
+    flex-wrap: wrap;
 }
 
 .thumbnail-btn {
@@ -612,9 +620,17 @@ export default {
     .thumbnail-slider {
         justify-content: center;
     }
+    
+    .product-container {
+        padding: 0 20px 3rem;
+    }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 780px) {
+    .product-container {
+        padding: 0 20px 2rem;
+    }
+    
     .product-title {
         font-size: 24px;
     }
@@ -637,7 +653,22 @@ export default {
     }
 }
 
-@media (max-width: 1024px) { .product-container { padding: 0 20px 3rem; } }
-@media (max-width: 780px) { .product-container { padding: 0 20px 2rem; } }
-@media (max-width: 480px) { .product-container { padding: 0 15px 1.5rem; } }
+@media (max-width: 480px) {
+    .product-container {
+        padding: 0 15px 1.5rem;
+    }
+    
+    .size-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    .current-price {
+        font-size: 20px;
+    }
+    
+    .old-price {
+        font-size: 16px;
+    }
+}
 </style>
