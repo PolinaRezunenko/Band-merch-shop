@@ -118,7 +118,10 @@ export default {
     name: 'App',
     components: { NotificationToast, BurgerMenu, AuthModal, SearchModal },
     setup() {
-        useSEO()  // ← мета-теги
+        useSEO()
+        
+        const authStore = useAuthStore()
+        authStore.init()  // ← ДОБАВИТЬ ЭТУ СТРОКУ
         
         const notificationRef = ref(null)
         

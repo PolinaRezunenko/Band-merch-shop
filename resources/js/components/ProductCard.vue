@@ -164,6 +164,7 @@ export default {
 </script>
 
 <style scoped>
+/* ========== БОЛЬШИЕ ЭКРАНЫ (1920px, 1440px, 1200px, 1024px) ========== */
 .product-card {
     position: relative;
     background: #fff;
@@ -173,16 +174,15 @@ export default {
     transition: transform 0.3s;
     border: 1px solid #D6D6D6;
     border-radius: 13px;
-    width: 100%;
-    height: 100%;
-    min-height: 380px;
+    width: 284px;
+    height: 490px;
 }
 
 .product-card:hover {
     transform: translateY(-4px);
 }
 
-/* Бейджи слева — друг под другом */
+/* Бейджи */
 .card-badges {
     position: absolute;
     top: 10px;
@@ -197,23 +197,17 @@ export default {
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0px;
     width: fit-content;
     padding: 2px 6px;
     border-radius: 4px;
 }
 
-.badge-new {
+.badge-new, .badge-hot {
     background: #ffffff;
     color: #F84343;
 }
 
-.badge-hot {
-    background: #ffffff;
-    color: #F84343;
-}
-
-/* Контейнер иконок справа */
+/* Иконки справа */
 .card-actions {
     position: absolute;
     top: 10px;
@@ -224,27 +218,13 @@ export default {
     z-index: 3;
 }
 
-.btn-favorite {
+.btn-favorite, .btn-quick-add {
     height: 28px;
     width: 28px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
-    background: none;
-    border: none;
-    padding: 0;
-}
-
-.btn-quick-add {
-    height: 28px;
-    width: 28px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
     background: none;
     border: none;
     padding: 0;
@@ -258,9 +238,9 @@ export default {
 /* Фото */
 .product-image-link {
     display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    margin: 45px auto 10px;
+    width: 244px;
+    height: 256px;
+    margin: 64px auto 10px;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -278,10 +258,10 @@ export default {
     transform: scale(1.05);
 }
 
-/* Инфо - растягивается на всю доступную высоту */
+/* Инфо */
 .product-info {
     text-align: center;
-    width: 100%;
+    width: 244px;
     margin: 0 auto;
     flex: 1;
     display: flex;
@@ -291,16 +271,16 @@ export default {
 .product-name {
     display: block;
     font-family: 'Roboto Mono';
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     color: #0a0a0a;
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: -2%;
+    width: 233px;
+    height: 42px;
     overflow: hidden;
-    margin: 0 auto 6px;
-    line-height: 1.3;
-    max-height: 42px;
+    margin: 0 auto 8px;
 }
 
 .product-name:hover {
@@ -310,31 +290,28 @@ export default {
 .product-price {
     display: block;
     font-family: 'Roboto Mono';
-    font-size: 14px;
+    font-size: 16px;
     color: #0a0a0a;
     font-weight: 400;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
-/* Контейнер для кнопки - прижимается к низу */
 .product-action {
     margin-top: auto;
     width: 100%;
 }
 
-/* Кнопка В корзину */
 .btn-add {
-    width: 100%;
-    padding: 10px;
+    width: 244px;
+    height: 44px;
     background: transparent;
     color: #000000;
     border: 1px solid black;
     border-radius: 5px;
     font-family: 'Roboto Mono';
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0px;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -344,15 +321,14 @@ export default {
     color: #ffffff;
 }
 
-/* Счётчик "В корзине" */
 .btn-add-counter {
-    width: 100%;
-    padding: 8px 10px;
+    width: 244px;
+    height: 44px;
     background: #0a0a0a;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    padding: 0 12px;
     border-radius: 5px;
 }
 
@@ -377,59 +353,80 @@ export default {
 .counter-text {
     color: #fff;
     font-family: 'Roboto Mono';
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 500;
     text-transform: uppercase;
 }
 
 /* ========== АДАПТИВ ========== */
 
-/* Планшеты */
+/* 1024px */
 @media (max-width: 1024px) {
     .product-card {
-        min-height: 360px;
+        width: 100%;
+        height: auto;
+        min-height: 420px;
     }
+    
+    .product-image-link {
+        width: 70%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        margin: 50px auto 10px;
+    }
+    
+    .product-info {
+        width: 90%;
+    }
+    
     .product-name {
-        font-size: 13px;
+        width: 100%;
+        height: auto;
+        font-size: 14px;
+        margin-bottom: 6px;
     }
+    
     .product-price {
-        font-size: 13px;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+    
+    .btn-add, .btn-add-counter {
+        width: 100%;
+        height: 42px;
+        font-size: 14px;
     }
 }
 
-/* Мобильные (780px) */
+/* 780px */
 @media (max-width: 780px) {
     .product-card {
-        min-height: 340px;
+        min-height: 360px;
         padding: 8px;
     }
     
     .product-image-link {
-        margin: 40px auto 8px;
+        width: 75%;
+        margin: 35px auto 8px;
     }
     
     .product-name {
         font-size: 12px;
-        max-height: 36px;
         margin-bottom: 4px;
     }
     
     .product-price {
         font-size: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 4px;
     }
     
-    .btn-add {
-        padding: 8px;
-        font-size: 11px;
-    }
-    
-    .btn-add-counter {
-        padding: 6px 8px;
+    .btn-add, .btn-add-counter {
+        height: 38px;
+        font-size: 12px;
     }
     
     .counter-text {
-        font-size: 10px;
+        font-size: 12px;
     }
     
     .counter-btn {
@@ -454,34 +451,45 @@ export default {
     }
 }
 
-/* Маленькие телефоны (480px) */
+/* 480px - фиксированная высота 280px */
 @media (max-width: 480px) {
     .product-card {
-        min-height: 320px;
+        width: 100%;
+        height: 280px;
+        min-height: auto;
         padding: 6px;
     }
     
     .product-image-link {
-        margin: 35px auto 6px;
+        width: 80%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        margin: 20px auto 6px;
     }
     
     .product-name {
         font-size: 11px;
-        max-height: 32px;
+        margin-bottom: 3px;
+        height: auto;
+        max-height: 28px;
     }
     
     .product-price {
         font-size: 11px;
-        margin-bottom: 8px;
+        margin-bottom: 3px;
     }
     
-    .btn-add {
-        padding: 6px;
-        font-size: 10px;
+    .btn-add, .btn-add-counter {
+        height: 32px;
+        font-size: 11px;
+    }
+    
+    .btn-add-counter {
+        padding: 0 8px;
     }
     
     .counter-text {
-        font-size: 9px;
+        font-size: 10px;
     }
     
     .counter-btn {
@@ -491,35 +499,38 @@ export default {
     }
 }
 
-/* Очень маленькие (390px) */
+/* 390px - ДОБАВИТЬ ЭТОТ БЛОК! */
 @media (max-width: 390px) {
     .product-card {
-        min-height: 250px;
-        padding: 5px;
+        width: 100%;
+        height: 230px !important; /* ← фиксированная высота для 390px */
+        min-height: auto;
+        padding: 4px;
     }
     
     .product-image-link {
-        margin: 30px auto 5px;
+        width: 75%;
+        margin: 12px auto 4px;
     }
     
     .product-name {
         font-size: 10px;
-        max-height: 28px;
-        line-height: 1.2;
+        margin-bottom: 2px;
+        max-height: 22px;
     }
     
     .product-price {
         font-size: 10px;
-        margin-bottom: 6px;
+        margin-bottom: 2px;
     }
     
-    .product-action {
-        margin-top: auto;
-    }
-    
-    .btn-add {
-        padding: 5px;
+    .btn-add, .btn-add-counter {
+        height: 26px;
         font-size: 9px;
+    }
+    
+    .btn-add-counter {
+        padding: 0 5px;
     }
     
     .counter-text {
@@ -527,24 +538,24 @@ export default {
     }
     
     .counter-btn {
-        width: 20px;
-        height: 20px;
-        font-size: 11px;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
     }
     
     .badge {
-        font-size: 9px;
-        padding: 1px 3px;
+        font-size: 7px;
+        padding: 1px 2px;
     }
     
     .action-icon {
-        height: 18px;
-        width: 18px;
+        height: 14px;
+        width: 14px;
     }
     
     .btn-favorite, .btn-quick-add {
-        height: 22px;
-        width: 22px;
+        height: 18px;
+        width: 18px;
     }
 }
 </style>

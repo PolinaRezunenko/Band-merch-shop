@@ -74,7 +74,15 @@
                         </div>
                         <div class="form-group">
                             <label>Телефон</label>
-                            <input type="tel" v-model="form.phone" placeholder="+7 (999) 999-99-99">
+                            <div class="phone-input">
+                                <span class="phone-prefix">+7</span>
+                                <input 
+                                    type="tel" 
+                                    v-model="form.phone" 
+                                    placeholder="(999) 999-99-99"
+                                    @input="formatPhone"
+                                >
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Город</label>
@@ -179,7 +187,11 @@ export default {
     computed: {
         cartItems() { return useCartStore().items },
         totalPrice() { return useCartStore().totalPrice },
-        breadcrumbs() { return [{ label: 'Корзина', link: '/cart' }, { label: 'Оформление заказа', link: null }] }
+        breadcrumbs() { return [{ label: 'Корзина', link: '/cart' }, { label: 'Оформление заказа', link: null }] },
+        authStore() { return useAuthStore() }
+    },
+    async mounted() {
+        await this.loadProfileData()
     },
     methods: {
         removeItem(productId, size) { useCartStore().removeFromCart(productId, size) },
@@ -196,6 +208,33 @@ export default {
                 if (this.notify) this.notify.success('Купон применён!', 'Скидка 500 ₽')
             }
         },
+        
+        formatPhone(event) {
+            let value = this.form.phone.replace(/\D/g, '')
+            if (value.length > 10) value = value.slice(0, 10)
+            let formatted = ''
+            for (let i = 0; i < value.length; i++) {
+                if (i === 0) formatted += '('
+                if (i === 3) formatted += ') '
+                if (i === 6) formatted += '-'
+                if (i === 8) formatted += '-'
+                formatted += value[i]
+            }
+            this.form.phone = formatted
+        },
+        
+        async loadProfileData() {
+            if (this.authStore.user && this.authStore.profile) {
+                const profile = this.authStore.profile
+                this.form.firstName = profile.first_name || ''
+                this.form.lastName = profile.last_name || ''
+                this.form.email = this.authStore.user.email || ''
+                this.form.phone = profile.phone || ''
+                this.form.city = profile.city || ''
+                this.form.address = profile.address || ''
+            }
+        },
+        
         async submitOrder() {
             this.error = ''
             
@@ -213,40 +252,99 @@ export default {
                 if (!userId) {
                     const password = 'Pass' + Math.random().toString(36).slice(-8) + '!'
                     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                        email: this.form.email, password: password
+                        email: this.form.email, 
+                        password: password,
+                        options: {
+                            data: {
+                                first_name: this.form.firstName,
+                                last_name: this.form.lastName,
+                                phone: this.form.phone
+                            }
+                        }
                     })
+                    
                     if (signUpError) {
                         if (signUpError.message.includes('already')) {
                             this.error = 'Этот email уже зарегистрирован. Войдите в аккаунт.'
-                            this.submitLoading = false; return
+                            this.submitLoading = false
+                            return
                         }
                         throw signUpError
                     }
+                    
                     if (signUpData.user) {
                         userId = signUpData.user.id
-                        await supabase.from('profiles').insert({
-                            id: userId, first_name: this.form.firstName, last_name: this.form.lastName,
-                            phone: this.form.phone, city: this.form.city, address: this.form.address
-                        })
+                        const { error: profileError } = await supabase
+                            .from('profiles')
+                            .insert({
+                                id: userId,
+                                email: this.form.email,
+                                first_name: this.form.firstName,
+                                last_name: this.form.lastName,
+                                phone: this.form.phone,
+                                city: this.form.city,
+                                address: this.form.address
+                            })
+                        
+                        if (profileError) {
+                            console.error('Ошибка сохранения профиля:', profileError)
+                        }
+                        
                         authStore.user = signUpData.user
                         await authStore.loadProfile()
                         if (this.notify) this.notify.success('Аккаунт создан!', 'Данные отправлены на email')
                     }
+                } else {
+                    const { error: updateError } = await supabase
+                        .from('profiles')
+                        .update({
+                            first_name: this.form.firstName,
+                            last_name: this.form.lastName,
+                            phone: this.form.phone,
+                            city: this.form.city,
+                            address: this.form.address
+                        })
+                        .eq('id', userId)
+                    
+                    if (updateError) {
+                        console.error('Ошибка обновления профиля:', updateError)
+                    }
+                    
+                    await authStore.loadProfile()
                 }
                 
-                const { data: order, error: orderError } = await supabase.from('orders').insert({
-                    user_id: userId, status: 'pending', total_price: cartStore.totalPrice - this.discount,
-                    discount: this.discount, payment_method: this.form.payment, delivery_method: this.form.delivery,
-                    first_name: this.form.firstName, last_name: this.form.lastName, email: this.form.email,
-                    phone: this.form.phone, city: this.form.city, address: this.form.address, comment: this.form.comment
-                }).select('id').single()
+                const { data: order, error: orderError } = await supabase
+                    .from('orders')
+                    .insert({
+                        user_id: userId,
+                        status: 'pending',
+                        total_price: cartStore.totalPrice - this.discount,
+                        discount: this.discount,
+                        payment_method: this.form.payment,
+                        delivery_method: this.form.delivery,
+                        first_name: this.form.firstName,
+                        last_name: this.form.lastName,
+                        email: this.form.email,
+                        phone: this.form.phone,
+                        city: this.form.city,
+                        address: this.form.address,
+                        comment: this.form.comment
+                    })
+                    .select('id')
+                    .single()
                 
                 if (orderError) throw orderError
                 
                 const items = cartStore.items.map(item => ({
-                    order_id: order.id, product_id: item.id, product_name: item.name,
-                    quantity: item.quantity, size: item.selectedSize, price: item.price, image_url: item.image_url
+                    order_id: order.id,
+                    product_id: item.id,
+                    product_name: item.name,
+                    quantity: item.quantity,
+                    size: item.selectedSize,
+                    price: item.price,
+                    image_url: item.image_url
                 }))
+                
                 await supabase.from('order_items').insert(items)
                 
                 cartStore.clearCart()
@@ -254,6 +352,7 @@ export default {
                 if (this.notify) this.notify.success('Заказ оформлен!', `Номер: #${order.id}`)
                 
                 setTimeout(() => this.$router.push('/profile'), 2000)
+                
             } catch (err) {
                 console.error('Ошибка:', err)
                 this.error = err.message || 'Ошибка оформления'
@@ -295,6 +394,29 @@ export default {
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-group label { font-size: 14px; color: #666; }
 .form-group input { padding: 14px 16px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+
+/* Стили для поля телефона с префиксом */
+.phone-input {
+    display: flex;
+    align-items: center;
+}
+
+.phone-prefix {
+    padding: 14px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+.phone-input input {
+    border-radius: 0 4px 4px 0;
+    flex: 1;
+}
+
 .radio-group { display: flex; flex-direction: column; gap: 15px; }
 .radio-label { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 15px; }
 .radio-label input[type="radio"] { width: 20px; height: 20px; accent-color: #000; margin: 0; }
@@ -326,6 +448,7 @@ export default {
     .btn-submit { padding: 16px; font-size: 14px; }
     .coupon-block { flex-direction: column; gap: 8px; }
     .btn-coupon { width: 100%; }
+    .phone-prefix { padding: 12px 14px; }
 }
 
 @media (max-width: 390px) {
@@ -333,5 +456,6 @@ export default {
     .checkout-title { font-size: 22px; }
     .cart-empty { padding: 60px 20px; }
     .cart-empty svg { width: 48px; height: 48px; }
+    .phone-prefix { padding: 10px 12px; font-size: 13px; }
 }
 </style>
