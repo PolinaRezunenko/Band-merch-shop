@@ -33,9 +33,10 @@
                             <span>Пользователи</span>
                         </button>
                         <button :class="{ active: activeTab === 'stats' }" @click="activeTab = 'stats'">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 12C21 13.2 20.7 14.4 20.2 15.5C19.7 16.6 19 17.6 18.1 18.4C17.2 19.2 16.2 19.9 15 20.3C13.8 20.7 12.5 21 11.2 21C9.9 21 8.6 20.7 7.4 20.2C6.2 19.7 5.1 19 4.1 18C3 17 2.2 15.9 1.6 14.6" stroke="currentColor" stroke-width="2" fill="none"/>
-                                <path d="M21 3V12H12" stroke="currentColor" stroke-width="2"/>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="14" width="4" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <rect x="10" y="8" width="4" height="12" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <rect x="16" y="2" width="4" height="18" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
                             </svg>
                             <span>Статистика</span>
                         </button>

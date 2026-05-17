@@ -51,7 +51,20 @@
 
                     <div class="size-guide" v-if="product.category_id === 1 || product.category_id === 2">
                         <button @click="showSizeTable = !showSizeTable" class="size-table-link">
-                            Таблица размеров {{ showSizeTable ? '▲' : '▼' }}
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4L20 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M4 8L20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M4 12L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M16 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M4 16L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M10 16L14 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M16 16L20 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M4 20L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Таблица размеров 
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" :style="{ transform: showSizeTable ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </button>
                         
                         <div v-if="showSizeTable" class="size-table">
@@ -117,8 +130,25 @@
                     </div>
 
                     <div class="delivery-info">
-                        <p>🚚 Бесплатная доставка при заказе от 5 000 ₽</p>
-                        <p>📦 Доставка: 3-7 рабочих дней</p>
+                        <p>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 3H5V14H19" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M5 6H9L13 10H19V14" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="7" cy="17" r="2" stroke="#666" stroke-width="1.5"/>
+                                <circle cx="17" cy="17" r="2" stroke="#666" stroke-width="1.5"/>
+                                <path d="M5 14H19" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Бесплатная доставка при заказе от 5 000 ₽
+                        </p>
+                        <p>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 4H19C20.1 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H5C3.9 20 3 19.1 3 18V6C3 4.9 3.9 4 5 4Z" stroke="#666" stroke-width="1.5" fill="none"/>
+                                <path d="M3 8H21" stroke="#666" stroke-width="1.5"/>
+                                <path d="M7 12H9" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M15 12H17" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Доставка: 3-7 рабочих дней
+                        </p>
                     </div>
                 </div>
             </div>
@@ -221,7 +251,6 @@ export default {
         window.scrollTo(0, 0)
     },
     watch: {
-        // ⚠️ ВАЖНО: Следим за изменением ID в URL
         '$route.params.id': {
             handler(newId, oldId) {
                 if (newId !== oldId) {
@@ -250,7 +279,7 @@ export default {
                 
                 if (productData) {
                     this.product = productData
-                    this.currentImageIndex = 0 // Сброс индекса изображения
+                    this.currentImageIndex = 0
                     
                     if (productData.collections) {
                         this.product.collection_name = productData.collections.name
@@ -262,7 +291,6 @@ export default {
                         this.selectedSize = productData.sizes[0]
                     }
                     
-                    // Сброс количества
                     this.quantity = 1
                 }
             } catch (err) {
@@ -458,6 +486,9 @@ export default {
 }
 
 .size-table-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     color: #000;
@@ -595,6 +626,9 @@ export default {
 }
 
 .delivery-info p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-family: 'Inter', sans-serif;
     color: #666;
     font-size: 14px;
@@ -603,6 +637,10 @@ export default {
 
 .delivery-info p:last-child {
     margin-bottom: 0;
+}
+
+.delivery-info svg {
+    flex-shrink: 0;
 }
 
 @media (max-width: 1024px) {
@@ -669,6 +707,15 @@ export default {
     
     .old-price {
         font-size: 16px;
+    }
+    
+    .delivery-info p {
+        font-size: 12px;
+    }
+    
+    .delivery-info svg {
+        width: 16px;
+        height: 16px;
     }
 }
 </style>
