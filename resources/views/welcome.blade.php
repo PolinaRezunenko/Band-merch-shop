@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="yandex-verification" content="27622861081903f0" />
+    <meta name="google-site-verification" content="I50gTttvk0JY30gp9V62BFDN0JFtUVxrX96iYRoUWyg" />
 
     <link rel="preload" href="/images/hero-bg.png" as="image">
     <link rel="preload" href="/images/catalog-hero-bg.png" as="image">
