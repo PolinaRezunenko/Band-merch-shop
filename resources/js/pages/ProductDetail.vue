@@ -10,34 +10,37 @@
         <div class="product-container">
             <div class="product-layout">
                 <!-- Левая колонка: Галерея -->
-                <div class="product-gallery-col">
-                    <div class="main-image-wrapper">
-                        <img 
-                            :src="currentImage" 
-                            :alt="currentAltText" 
-                            class="main-image"
-                            loading="eager"
-                            @error="handleImageError"
-                        >
-                    </div>
+                <!-- Левая колонка: Галерея -->
+<div class="product-gallery-col">
+    <!-- Главное изображение -->
+    <div class="main-image-wrapper">
+        <img 
+            :src="productImages.length > 0 ? productImages[currentImageIndex] : '/images/placeholder.png'" 
+            :alt="product.name || 'Товар'" 
+            class="main-image"
+            loading="eager"
+            @error="e => e.target.src = '/images/placeholder.png'"
+        >
+    </div>
 
-                    <div class="thumbnail-slider" v-if="productImages.length > 1">
-                        <button 
-                            v-for="(img, index) in productImages" 
-                            :key="index"
-                            :class="['thumbnail-btn', { active: currentImageIndex === index }]"
-                            @click="currentImageIndex = index"
-                        >
-                            <img 
-                                :src="img.url" 
-                                :alt="img.alt || (product.name + ' фото ' + (index + 1))" 
-                                class="thumbnail-img"
-                                loading="lazy"
-                                @error="handleThumbnailError"
-                            >
-                        </button>
-                    </div>
-                </div>
+    <!-- Слайдер миниатюр -->
+    <div class="thumbnail-slider" v-if="productImages.length > 1">
+        <button 
+            v-for="(img, index) in productImages" 
+            :key="index"
+            :class="['thumbnail-btn', { active: currentImageIndex === index }]"
+            @click="currentImageIndex = index"
+        >
+            <img 
+                :src="img" 
+                :alt="product.name + ' ' + (index + 1)" 
+                class="thumbnail-img"
+                loading="lazy"
+                @error="e => e.target.src = '/images/placeholder.png'"
+            >
+        </button>
+    </div>
+</div>
 
                 <!-- Правая колонка: Информация -->
                 <div class="product-info-col">
@@ -173,12 +176,7 @@ import DiscountBanner from '../components/DiscountBanner.vue'
 
 export default {
     name: 'ProductDetailPage',
-    components: {
-        Breadcrumbs,
-        QuantityCounter,
-        PopularProducts,
-        DiscountBanner
-    },
+    components: { Breadcrumbs, QuantityCounter, PopularProducts, DiscountBanner },
     data() {
         return {
             product: {},
@@ -192,163 +190,77 @@ export default {
         }
     },
     computed: {
-        currentImage() {
-            if (this.productImages.length > 0) {
-                return this.productImages[this.currentImageIndex]?.url || this.product.image_url
-            }
-            return this.product.image_url
-        },
-        currentAltText() {
-            if (this.productImages.length > 0 && this.productImages[this.currentImageIndex]) {
-                return this.productImages[this.currentImageIndex].alt || this.product.name
-            }
-            return this.product.name
-        },
         breadcrumbs() {
-            const catNames = { 
-                1: 'Футболки', 
-                2: 'Худи и свитшоты', 
-                3: 'Аксессуары', 
-                4: 'Винил', 
-                5: 'CD-диски' 
-            }
-            const catSlugs = { 
-                1: 't-shirts', 
-                2: 'hoodies', 
-                3: 'accessories', 
-                4: 'vinyl', 
-                5: 'cd' 
-            }
-            
-            const crumbs = [
-                { label: 'Каталог', link: '/catalog' }
-            ]
-            
-            if (this.product.collection_name) {
-                crumbs.push({ 
-                    label: this.product.collection_name, 
-                    link: null 
-                })
-            }
-            
-            if (this.product.category_id) {
-                crumbs.push({ 
-                    label: catNames[this.product.category_id] || 'Каталог', 
-                    link: '/catalog/' + (catSlugs[this.product.category_id] || '') 
-                })
-            }
-            
-            crumbs.push({ 
-                label: this.product.name || 'Товар', 
-                link: null 
-            })
-            
+            const catNames = { 1: 'Футболки', 2: 'Худи и свитшоты', 3: 'Аксессуары', 4: 'Винил', 5: 'CD-диски' }
+            const catSlugs = { 1: 't-shirts', 2: 'hoodies', 3: 'accessories', 4: 'vinyl', 5: 'cd' }
+            const crumbs = [{ label: 'Каталог', link: '/catalog' }]
+            if (this.product.collection_name) crumbs.push({ label: this.product.collection_name, link: null })
+            if (this.product.category_id) crumbs.push({ label: catNames[this.product.category_id], link: '/catalog/' + catSlugs[this.product.category_id] })
+            crumbs.push({ label: this.product.name || 'Товар', link: null })
             return crumbs
+        }
+    },
+    watch: {
+        '$route.params.id': {
+            handler(newId, oldId) {
+                if (newId && newId !== oldId) {
+                    this.currentImageIndex = 0
+                    this.productImages = []
+                    this.loading = true
+                    this.loadProduct()
+                    window.scrollTo(0, 0)
+                }
+            }
         }
     },
     async mounted() {
         await this.loadProduct()
         window.scrollTo(0, 0)
     },
-    watch: {
-        '$route.params.id': {
-            handler(newId, oldId) {
-                if (newId !== oldId) {
-                    console.log('ID изменился, загружаем новый товар:', newId)
-                    this.loadProduct()
-                    window.scrollTo(0, 0)
-                }
-            },
-            immediate: false
-        }
-    },
     methods: {
         async loadProduct() {
-            this.loading = true
             try {
-                const productId = this.$route.params.id
-                console.log('Загрузка товара с ID:', productId)
-                
-                const { data: productData, error: productError } = await supabase
+                const { data, error } = await supabase
                     .from('products')
                     .select('*, collections(name)')
-                    .eq('id', productId)
+                    .eq('id', this.$route.params.id)
                     .single()
                 
-                if (productError) throw productError
+                if (error) throw error
                 
-                if (productData) {
-                    this.product = productData
-                    this.currentImageIndex = 0
+                if (data) {
+                    this.product = data
+                    if (data.collections) this.product.collection_name = data.collections.name
                     
-                    if (productData.collections) {
-                        this.product.collection_name = productData.collections.name
+                    const { data: images } = await supabase
+                        .from('product_images')
+                        .select('image_url')
+                        .eq('product_id', this.$route.params.id)
+                        .order('sort_order', { ascending: true })
+                    
+                    const baseUrl = 'https://uxtjoywjdihkxqzjhsgg.supabase.co/storage/v1/object/public/product-images/'
+                    
+                    if (images && images.length > 0) {
+                        this.productImages = images.map(img => baseUrl + img.image_url + '?width=600')
+                    } else if (data.image_url) {
+                        this.productImages = [data.image_url]
+                    } else {
+                        this.productImages = ['/images/placeholder.png']
                     }
                     
-                    await this.loadProductImages(productData.id)
-                    
-                    if (productData.sizes && productData.sizes.length > 0) {
-                        this.selectedSize = productData.sizes[0]
-                    }
-                    
-                    this.quantity = 1
+                    if (data.sizes && data.sizes.length > 0) this.selectedSize = data.sizes[0]
                 }
             } catch (err) {
-                console.error('Ошибка загрузки товара:', err)
-                this.$router.push('/catalog')
+                console.error('Ошибка:', err)
             } finally {
                 this.loading = false
             }
         },
-        
-        async loadProductImages(productId) {
-            try {
-                const { data: imagesData, error: imagesError } = await supabase
-                    .from('product_images')
-                    .select('image_url, alt_text')
-                    .eq('product_id', productId)
-                    .order('sort_order', { ascending: true })
-                
-                if (imagesError) throw imagesError
-                
-                if (imagesData && imagesData.length > 0) {
-                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
-                    this.productImages = imagesData.map(img => ({
-                        url: `${supabaseUrl}/storage/v1/object/public/product-images/${img.image_url}`,
-                        alt: img.alt_text || this.product.name
-                    }))
-                } else {
-                    this.productImages = [{
-                        url: this.product.image_url,
-                        alt: this.product.name
-                    }]
-                }
-            } catch (err) {
-                console.error('Ошибка загрузки изображений:', err)
-                this.productImages = [{
-                    url: this.product.image_url,
-                    alt: this.product.name
-                }]
-            }
-        },
-        
-        handleImageError(event) {
-            event.target.src = 'https://placehold.co/600x600/f5f5f5/0a0a0a?text=Нет+фото'
-            event.target.alt = 'Изображение недоступно'
-        },
-        
-        handleThumbnailError(event) {
-            event.target.src = 'https://placehold.co/120x120/f5f5f5/0a0a0a?text=Нет'
-            event.target.alt = 'Миниатюра недоступна'
-        },
-        
         formatPrice(price) {
             return Number(price).toLocaleString('ru-RU')
         },
-        
         addToCart() {
-            const cartStore = useCartStore()
-            cartStore.addToCart(this.product, this.selectedSize, this.quantity)
+            useCartStore().addToCart(this.product, this.selectedSize, this.quantity)
         }
     }
 }

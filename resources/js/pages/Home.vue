@@ -75,7 +75,6 @@ export default {
     data() {
         return {
             newProducts: [],
-            email: '',
             loading: true
         }
     },
@@ -84,13 +83,13 @@ export default {
     },
     methods: {
         async loadNewProducts() {
-            const { data } = await supabase.from('products').select('*').eq('is_new', true).limit(4)
+            const { data } = await supabase
+                .from('products')
+                .select('id, name, price, old_price, image_url, is_new, is_hot, sizes')
+                .eq('is_new', true)
+                .limit(4)
             this.newProducts = data || []
             this.loading = false
-        },
-        subscribe() {
-            alert('Спасибо за подписку!')
-            this.email = ''
         }
     }
 }

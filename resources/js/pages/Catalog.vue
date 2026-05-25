@@ -104,6 +104,7 @@ export default {
     data() {
         return {
             allProducts: [],
+            loading: true,
             collections: [
                 { id: 1, name: "THAT'S THE SPIRIT 10TH ANNIVERSARY", slug: 'thats-the-spirit' },
                 { id: 2, name: 'POST HUMAN: NeX GEn', slug: 'post-human' },
@@ -121,105 +122,70 @@ export default {
             currentPage: 1,
             perPage: 9,
             activeFilters: {
-                collections: [],
-                categories: [],
-                sizes: [],
-                minPrice: null,
-                maxPrice: null
+                collections: [], categories: [], sizes: [], minPrice: null, maxPrice: null
             },
-            slugToCollectionId: {
-                'thats-the-spirit': 1,
-                'post-human': 2,
-                'eras': 3,
-                'tour': 4
-            },
-            slugToCategoryId: {
-                't-shirts': 1,
-                'hoodies': 2,
-                'accessories': 3,
-                'vinyl': 4,
-                'cd': 5
-            }
+            slugToCollectionId: { 'thats-the-spirit': 1, 'post-human': 2, 'eras': 3, 'tour': 4 },
+            slugToCategoryId: { 't-shirts': 1, 'hoodies': 2, 'accessories': 3, 'vinyl': 4, 'cd': 5 }
         }
     },
     computed: {
-        filteredProducts() {
+        sortedProducts() {
             let result = [...this.allProducts]
-
-            // Фильтр по коллекциям
+            switch(this.sortBy) {
+                case 'price-asc':
+                    return result.sort((a, b) => a.price - b.price)
+                case 'price-desc':
+                    return result.sort((a, b) => b.price - a.price)
+                case 'newest':
+                    return result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                case 'popular':
+                    return result.sort((a, b) => {
+                        if (a.is_hot && !b.is_hot) return -1
+                        if (!a.is_hot && b.is_hot) return 1
+                        return new Date(b.created_at) - new Date(a.created_at)
+                    })
+                default:
+                    return result
+            }
+        },
+        filteredProducts() {
+            let result = [...this.sortedProducts]
             if (this.activeFilters.collections.length > 0) {
-                const colIds = this.activeFilters.collections
-                    .map(slug => this.slugToCollectionId[slug])
-                    .filter(Boolean)
-                if (colIds.length > 0) {
-                    result = result.filter(p => p.collection_id && colIds.includes(p.collection_id))
-                }
+                const colIds = this.activeFilters.collections.map(slug => this.slugToCollectionId[slug]).filter(Boolean)
+                if (colIds.length > 0) result = result.filter(p => p.collection_id && colIds.includes(p.collection_id))
             }
-
-            // Фильтр по категориям
             if (this.activeFilters.categories.length > 0) {
-                const catIds = this.activeFilters.categories
-                    .map(slug => this.slugToCategoryId[slug])
-                    .filter(Boolean)
-                if (catIds.length > 0) {
-                    result = result.filter(p => catIds.includes(p.category_id))
-                }
+                const catIds = this.activeFilters.categories.map(slug => this.slugToCategoryId[slug]).filter(Boolean)
+                if (catIds.length > 0) result = result.filter(p => catIds.includes(p.category_id))
             }
-
-            // Фильтр по цене
-            if (this.activeFilters.minPrice !== null && this.activeFilters.minPrice !== '' && !isNaN(this.activeFilters.minPrice)) {
+            if (this.activeFilters.minPrice !== null && this.activeFilters.minPrice !== '' && !isNaN(this.activeFilters.minPrice))
                 result = result.filter(p => p.price >= Number(this.activeFilters.minPrice))
-            }
-            if (this.activeFilters.maxPrice !== null && this.activeFilters.maxPrice !== '' && !isNaN(this.activeFilters.maxPrice) && Number(this.activeFilters.maxPrice) > 0) {
+            if (this.activeFilters.maxPrice !== null && this.activeFilters.maxPrice !== '' && !isNaN(this.activeFilters.maxPrice) && Number(this.activeFilters.maxPrice) > 0)
                 result = result.filter(p => p.price <= Number(this.activeFilters.maxPrice))
-            }
-
             return result
         },
         paginatedProducts() {
             const start = (this.currentPage - 1) * this.perPage
             return this.filteredProducts.slice(start, start + this.perPage)
         },
-        totalPages() {
-            return Math.ceil(this.filteredProducts.length / this.perPage) || 1
-        },
+        totalPages() { return Math.ceil(this.filteredProducts.length / this.perPage) || 1 },
         breadcrumbs() {
             const crumbs = []
-            
             if (this.activeFilters.collections.length > 0) {
-                const colSlug = this.activeFilters.collections[0]
-                const col = this.collections.find(c => c.slug === colSlug)
-                if (col) {
-                    crumbs.push({ label: col.name, link: null })
-                }
+                const col = this.collections.find(c => c.slug === this.activeFilters.collections[0])
+                if (col) crumbs.push({ label: col.name, link: null })
             }
-            
             if (this.activeFilters.categories.length > 0) {
-                const catSlug = this.activeFilters.categories[0]
-                const cat = this.categories.find(c => c.slug === catSlug)
-                if (cat) {
-                    crumbs.push({ label: cat.name, link: null })
-                }
+                const cat = this.categories.find(c => c.slug === this.activeFilters.categories[0])
+                if (cat) crumbs.push({ label: cat.name, link: null })
             }
-            
-            if (crumbs.length === 0) {
-                crumbs.push({ label: 'Каталог', link: null })
-            }
-            
+            if (crumbs.length === 0) crumbs.push({ label: 'Каталог', link: null })
             return crumbs
         }
     },
     watch: {
-        activeFilters: {
-            deep: true,
-            handler() {
-                this.currentPage = 1
-                this.updateUrl()
-            }
-        },
-        '$route'() {
-            this.applyFilterFromUrl()
-        }
+        activeFilters: { deep: true, handler() { this.currentPage = 1; this.updateUrl() } },
+        '$route'() { this.applyFilterFromUrl() }
     },
     async mounted() {
         await this.loadProducts()
@@ -227,76 +193,41 @@ export default {
     },
     methods: {
         async loadProducts() {
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false })
-            
-            if (!error && data) {
-                this.allProducts = data
+            this.loading = true
+            const cached = localStorage.getItem('catalog_products')
+            const cacheTime = localStorage.getItem('catalog_cache_time')
+            if (cached && cacheTime && Date.now() - Number(cacheTime) < 300000) {
+                this.allProducts = JSON.parse(cached)
+                this.loading = false
+                return
             }
+            const { data } = await supabase
+                .from('products')
+                .select('id, name, price, old_price, image_url, is_new, is_hot, in_stock, category_id, collection_id, sizes')
+                .order('created_at', { ascending: false })
+            this.allProducts = data || []
+            localStorage.setItem('catalog_products', JSON.stringify(this.allProducts))
+            localStorage.setItem('catalog_cache_time', Date.now())
+            this.loading = false
         },
-        
         applyFilterFromUrl() {
             const path = this.$route.path
-            
             this.activeFilters.collections = []
             this.activeFilters.categories = []
-            
-            const collectionSlugs = ['thats-the-spirit', 'post-human', 'eras', 'tour']
-            for (const slug of collectionSlugs) {
-                if (path.includes('/catalog/' + slug)) {
-                    this.activeFilters.collections = [slug]
-                    return
-                }
-            }
-            
-            const categorySlugs = ['t-shirts', 'hoodies', 'accessories', 'vinyl', 'cd']
-            for (const slug of categorySlugs) {
-                if (path.includes('/catalog/' + slug)) {
-                    this.activeFilters.categories = [slug]
-                    return
-                }
-            }
+            const slugs = ['thats-the-spirit', 'post-human', 'eras', 'tour']
+            for (const slug of slugs) { if (path.includes('/catalog/' + slug)) { this.activeFilters.collections = [slug]; return } }
+            const catSlugs = ['t-shirts', 'hoodies', 'accessories', 'vinyl', 'cd']
+            for (const slug of catSlugs) { if (path.includes('/catalog/' + slug)) { this.activeFilters.categories = [slug]; return } }
         },
-        
         updateUrl() {
             let newPath = '/catalog'
-            
-            if (this.activeFilters.collections.length > 0) {
-                newPath += '/' + this.activeFilters.collections[0]
-            } else if (this.activeFilters.categories.length > 0) {
-                newPath += '/' + this.activeFilters.categories[0]
-            }
-            
-            if (this.$route.path !== newPath) {
-                this.$router.replace(newPath)
-            }
+            if (this.activeFilters.collections.length > 0) newPath += '/' + this.activeFilters.collections[0]
+            else if (this.activeFilters.categories.length > 0) newPath += '/' + this.activeFilters.categories[0]
+            if (this.$route.path !== newPath) this.$router.replace(newPath)
         },
-        
         resetFilters() {
-            this.activeFilters = {
-                collections: [],
-                categories: [],
-                sizes: [],
-                minPrice: null,
-                maxPrice: null
-            }
+            this.activeFilters = { collections: [], categories: [], sizes: [], minPrice: null, maxPrice: null }
             this.$router.push('/catalog')
-        },
-        
-        sortProducts() {
-            switch(this.sortBy) {
-                case 'price-asc': 
-                    this.allProducts.sort((a, b) => a.price - b.price)
-                    break
-                case 'price-desc': 
-                    this.allProducts.sort((a, b) => b.price - a.price)
-                    break
-                case 'newest': 
-                    this.allProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                    break
-            }
         }
     }
 }

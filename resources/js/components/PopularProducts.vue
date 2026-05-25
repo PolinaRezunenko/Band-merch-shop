@@ -21,38 +21,22 @@ export default {
     name: 'PopularProducts',
     components: { ProductCard },
     props: {
-        title: {
-            type: String,
-            default: 'Самое популярное сейчас'
-        },
-        filter: {
-            type: String,
-            default: 'all'
-        },
-        limit: {
-            type: Number,
-            default: 4
-        }
+        title: { type: String, default: 'Самое популярное сейчас' },
+        filter: { type: String, default: 'all' },
+        limit: { type: Number, default: 4 }
     },
     data() {
         return { products: [] }
     },
     async mounted() {
         try {
-            let query = supabase.from('products').select('*')
-            
-            if (this.filter === 'hot') {
-                query = query.eq('is_hot', true)
-            } else if (this.filter === 'new') {
-                query = query.eq('is_new', true)
-            }
-            
-            const { data, error } = await query.limit(this.limit)
-            
-            if (error) throw error
+            let query = supabase.from('products').select('id, name, price, old_price, image_url, is_new, is_hot, sizes')
+            if (this.filter === 'hot') query = query.eq('is_hot', true)
+            else if (this.filter === 'new') query = query.eq('is_new', true)
+            const { data } = await query.limit(this.limit)
             this.products = data || []
         } catch (err) {
-            console.error('Ошибка загрузки товаров:', err)
+            console.error('Ошибка загрузки:', err)
         }
     }
 }

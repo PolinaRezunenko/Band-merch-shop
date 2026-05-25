@@ -178,6 +178,7 @@ export default {
     height: 490px;
 }
 
+
 .product-card:hover {
     transform: translateY(-4px);
 }

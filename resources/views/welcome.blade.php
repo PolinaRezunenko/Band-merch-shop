@@ -7,6 +7,8 @@
     <meta name="yandex-verification" content="27622861081903f0" />
     <meta name="google-site-verification" content="I50gTttvk0JY30gp9V62BFDN0JFtUVxrX96iYRoUWyg" />
 
+
+
     <link rel="preload" href="/images/hero-bg.png" as="image">
     <link rel="preload" href="/images/catalog-hero-bg.png" as="image">
     <link rel="preload" href="/images/discount-bg.png" as="image">
@@ -14,9 +16,17 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Предзагрузка шрифтов -->
+    <link rel="preload" href="/fonts/Inter_18pt-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="/fonts/Zen_Antique/ZenAntique-Regular.ttf" as="font" crossorigin>
     
+    <title>BMTH Store</title>
+    
+    <!-- Защита от сдвигов при загрузке шрифтов -->
+    <style>
+        body { font-display: swap; }
+    </style>
 
- <title>BMTH Store</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>

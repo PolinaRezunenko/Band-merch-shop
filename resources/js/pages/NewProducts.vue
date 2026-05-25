@@ -46,11 +46,10 @@ export default {
         async loadNewProducts() {
             const { data } = await supabase
                 .from('products')
-                .select('*')
+                .select('id, name, price, old_price, image_url, is_new, is_hot, sizes')
                 .eq('is_new', true)
                 .order('created_at', { ascending: false })
                 .limit(12)
-            
             this.products = data || []
             this.loading = false
         }
