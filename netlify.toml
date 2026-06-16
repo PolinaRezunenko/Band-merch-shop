@@ -1,13 +1,13 @@
 [build]
   command = "npm run build"
-  publish = "dist"
+  publish = "public"
 
 [build.environment]
   NODE_VERSION = "18"
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/index.php"
   status = 200
 
 [[headers]]
