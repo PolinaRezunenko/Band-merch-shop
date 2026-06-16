@@ -23,6 +23,7 @@ export default defineConfig({
         },
     },
     build: {
+        outDir: 'public',  // ← УБЕДИТЕСЬ, ЧТО ТАК!
         rollupOptions: {
             input: {
                 app: './resources/js/app.js',

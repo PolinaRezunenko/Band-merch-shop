@@ -1,13 +1,13 @@
 [build]
   command = "npm run build"
-  publish = "public"
+  publish = "public"  # ← пока оставляем
 
 [build.environment]
-  NODE_VERSION = "20"  # ← ИЗМЕНЕНО С 18 НА 20!
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
-  to = "/index.php"
+  to = "/index.html"   # ← ИЗМЕНЕНО: /index.html вместо /index.php
   status = 200
 
 [[headers]]
