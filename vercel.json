@@ -1,5 +1,5 @@
 {
-  "outputDirectory": "public",
-  "framework": "vite",
-  "buildCommand": "npm run build"
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
