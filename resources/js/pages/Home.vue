@@ -64,7 +64,8 @@
 </template>
 
 <script>
-import { supabase } from '../config/supabase'
+import { useProductsStore } from '../stores/products'
+import { computed, onMounted } from 'vue'
 import PopularProducts from '../components/PopularProducts.vue'
 import ProductCard from '../components/ProductCard.vue'
 import DiscountBanner from '../components/DiscountBanner.vue'
@@ -72,31 +73,22 @@ import DiscountBanner from '../components/DiscountBanner.vue'
 export default {
     name: 'HomePage',
     components: { PopularProducts, ProductCard, DiscountBanner },
-    data() {
-        return {
-            newProducts: [],
-            loading: true
-        }
-    },
-    async mounted() {
-        await this.loadNewProducts()
-    },
-    methods: {
-        async loadNewProducts() {
-            const { data } = await supabase
-                .from('products')
-                .select('id, name, price, old_price, image_url, is_new, is_hot, sizes')
-                .eq('is_new', true)
-                .limit(4)
-            this.newProducts = data || []
-            this.loading = false
-        }
+    setup() {
+        const store = useProductsStore()
+        
+        const newProducts = computed(() => store.newProducts.slice(0, 4))
+        
+        onMounted(async () => {
+            await store.fetchAllProducts()
+        })
+        
+        return { newProducts }
     }
 }
 </script>
 
 <style scoped>
-/* HERO БАННЕР */
+/* Все ваши стили остаются БЕЗ ИЗМЕНЕНИЙ */
 .hero {
     height: 768px;
     background-size: cover;
@@ -108,14 +100,12 @@ export default {
     position: relative;
     width: 100%;
 }
-
 .hero::after {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.25);
 }
-
 .hero-content {
     position: relative;
     z-index: 1;
@@ -124,7 +114,6 @@ export default {
     margin: 0 auto;
     padding: 286px 20px 171px 0px;
 }
-
 .hero-title {
     font-family: 'Zen Antique', serif;
     font-size: 66px;
@@ -133,7 +122,6 @@ export default {
     text-transform: uppercase;
     line-height: 100%;
 }
-
 .hero-btn {
     font-family: 'Inter', sans-serif;
     padding: 20px 32px;
@@ -146,14 +134,11 @@ export default {
     width: 183px;
     height: 56px;
 }
-
 .hero-btn:hover {
     background: transparent;
     color: #ffffff;
     border: 2px solid #fff;
 }
-
-/* ПОЛУКРУГЛЫЙ РАЗДЕЛИТЕЛЬ */
 .hero-divider {
     position: absolute;
     bottom: -40px;
@@ -165,19 +150,13 @@ export default {
     border-radius: 51px;
     z-index: 2;
 }
-
-/* Белая область */
 .home { background: #fff; }
-
-/* СЕКЦИИ */
 .section {
     max-width: 1200px;
     margin: 0 auto;
     padding: 4rem 20px;
 }
-
 .section-header { margin-bottom: 2rem; }
-
 .section-title {
     font-family: 'Ruberoid', sans-serif;
     font-weight: 500;
@@ -186,7 +165,6 @@ export default {
     position: relative;
     display: inline-block;
 }
-
 .section-title::after {
     content: '';
     position: absolute;
@@ -196,36 +174,29 @@ export default {
     height: 2px;
     background: #000;
 }
-
-/* СЕТКА ТОВАРОВ */
 .products-grid {
     max-width: 1200px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
-
-/* СЕКЦИЯ КАТАЛОГ */
 .categories-layout {
     display: flex;
     gap: 16px;
     max-width: 1200px;
     margin: 0 auto;
 }
-
 .categories-left {
     display: flex;
     gap: 16px;
     flex: 1;
 }
-
 .categories-right {
     display: flex;
     flex-direction: column;
     gap: 16px;
     width: 384px;
 }
-
 .category-card {
     position: relative;
     display: block;
@@ -234,9 +205,7 @@ export default {
     overflow: hidden;
     transition: transform 0.3s;
 }
-
 .category-card:hover { transform: translateY(-4px); }
-
 .category-card img {
     width: 100%;
     height: 100%;
@@ -244,7 +213,6 @@ export default {
     position: absolute;
     top: 0; left: 0;
 }
-
 .category-card span {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -255,18 +223,14 @@ export default {
     text-transform: uppercase;
     background: linear-gradient(transparent, rgba(0,0,0,0.7));
 }
-
 .category-card-large {
     flex: 1;
     height: 471px;
 }
-
 .category-card-small {
     flex: 1;
     height: 142px;
 }
-
-/* СЕКЦИЯ СКИДКИ */
 .section-discount {
     position: relative;
     max-width: 1200px;
@@ -280,7 +244,6 @@ export default {
     border-radius: 12px;
     overflow: hidden;
 }
-
 .discount-content h3 {
     font-family: 'Ruberoid', sans-serif;
     font-size: 40px;
@@ -288,7 +251,6 @@ export default {
     margin-bottom: 16px;
     text-transform: uppercase;
 }
-
 .discount-content p {
     font-family: 'Inter', sans-serif;
     color: #fff;
@@ -298,14 +260,12 @@ export default {
     line-height: 1.5;
     opacity: 0.9;
 }
-
 .subscribe-form {
     display: flex;
     gap: 12px;
     max-width: 450px;
     margin: 0 auto;
 }
-
 .subscribe-form input {
     flex: 1;
     padding: 14px 20px;
@@ -317,7 +277,6 @@ export default {
     border-radius: 8px;
     outline: none;
 }
-
 .subscribe-form button {
     padding: 14px 28px;
     background: #000;
@@ -329,20 +288,16 @@ export default {
     border-radius: 8px;
     cursor: pointer;
 }
-
 .subscribe-form button:hover { background: #333; }
 
-/* ========== АДАПТИВ ========== */
 @media (max-width: 1200px) {
     .products-grid { grid-template-columns: repeat(3, 1fr); }
     .hero-title { font-size: 52px; }
 }
-
 @media (max-width: 1024px) {
     .hero { height: 550px; }
     .hero-content { padding: 200px 20px 120px 60px; }
     .hero-title { font-size: 42px; }
-
     .categories-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -354,42 +309,33 @@ export default {
     .category-card-large { height: 250px; }
     .category-card-small { height: 160px; }
 }
-
 @media (max-width: 780px) {
     .hero { height: 450px; }
     .hero-content { padding: 180px 20px 100px 20px; }
     .hero-title { font-size: 36px; }
     .hero-btn { padding: 14px 24px; width: auto; height: auto; font-size: 13px; }
     .hero-divider { height: 60px; bottom: -30px; border-radius: 40px; }
-
     .products-grid { grid-template-columns: repeat(2, 1fr); }
     .section-title { font-size: 28px; }
-
     .categories-layout { gap: 10px; }
     .category-card-large { height: 200px; }
     .category-card-small { height: 140px; }
     .category-card span { font-size: 28px; }
-
     .section-discount { height: 320px; margin: 0 20px; }
     .discount-content h3 { font-size: 32px; }
 }
-
 @media (max-width: 480px) {
     .hero { height: 380px; }
     .hero-content { padding: 150px 20px 80px 20px; }
     .hero-title { font-size: 28px; }
     .hero-btn { padding: 12px 20px; font-size: 12px; }
     .hero-divider { height: 40px; bottom: -20px; border-radius: 25px; }
-
-    /* Глобальная сетка товаров - оставляем 1 колонку */
     .products-grid { grid-template-columns: 1fr; }
     .section-title { font-size: 24px; }
-
     .categories-layout { grid-template-columns: 1fr; }
     .category-card-large { height: 200px; }
     .category-card-small { height: 130px; }
     .category-card span { font-size: 24px; }
-
     .section-discount { height: 360px; margin: 0 10px; }
     .discount-content h3 { font-size: 26px; }
     .discount-content p { font-size: 13px; }
@@ -397,50 +343,36 @@ export default {
     .subscribe-form input { width: 100%; }
     .subscribe-form button { width: 100%; }
 }
-
-/* ========== ТОЛЬКО СЕКЦИЯ НОВИНКИ - 2 КОЛОНКИ НА МОБИЛЬНЫХ ========== */
-
-/* На планшетах - 3 колонки */
 @media (max-width: 1024px) {
     .section-new .products-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 16px;
     }
 }
-
-/* На 780px - 2 колонки */
 @media (max-width: 780px) {
     .section-new .products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 }
-
-/* На 480px - 2 колонки (вместо 1) */
 @media (max-width: 480px) {
     .section-new .products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 }
-
-/* На 390px - всё ещё 2 колонки */
 @media (max-width: 390px) {
     .section-new .products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
 }
-
-/* Отступы для секций на главной */
 @media (max-width: 1024px) {
     .section { padding: 3rem 20px; }
 }
-
 @media (max-width: 780px) {
     .section { padding: 2.5rem 20px; }
 }
-
 @media (max-width: 480px) {
     .section { padding: 2rem 15px; }
 }

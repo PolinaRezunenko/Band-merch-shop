@@ -1,7 +1,13 @@
 <template>
     <div class="cart-item">
         <router-link :to="'/product/' + item.id" class="cart-item-image-link">
-            <img :src="itemImage" :alt="item.name" loading="lazy" class="cart-item-image" @error="handleImageError">
+            <img 
+                :src="item.image_url || 'https://placehold.co/100x100/f5f5f5/0a0a0a?text=Нет+фото'" 
+                :alt="item.name" 
+                loading="lazy" 
+                class="cart-item-image" 
+                @error="e => e.target.src = 'https://placehold.co/100x100/f5f5f5/0a0a0a?text=Нет+фото'"
+            >
         </router-link>
         
         <div class="cart-item-info">
@@ -32,7 +38,6 @@
 </template>
 
 <script>
-import { supabase } from '../config/supabase'
 import QuantityCounter from './QuantityCounter.vue'
 
 export default {
@@ -47,34 +52,10 @@ export default {
     emits: ['remove', 'update-quantity'],
     data() {
         return { 
-            itemQuantity: this.item.quantity,
-            itemImage: this.item.image_url
+            itemQuantity: this.item.quantity
         }
     },
-    async mounted() {
-        await this.loadMainImage()
-    },
     methods: {
-        async loadMainImage() {
-            try {
-                const { data, error } = await supabase
-                    .from('product_images')
-                    .select('image_url')
-                    .eq('product_id', this.item.id)
-                    .eq('is_main', true)
-                    .single()
-                
-                if (data && !error) {
-                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-                    this.itemImage = `${supabaseUrl}/storage/v1/object/public/product-images/${data.image_url}`
-                }
-            } catch (err) {
-                // Оставляем image_url из item
-            }
-        },
-        handleImageError(event) {
-            event.target.src = 'https://placehold.co/100x100/f5f5f5/0a0a0a?text=Нет+фото'
-        },
         updateQty(val) {
             this.itemQuantity = val
             this.$emit('update-quantity', { 
