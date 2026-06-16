@@ -1,16 +1,16 @@
 [build]
   command = "npm run build"
-  publish = "public"  # ← пока оставляем
+  publish = "public"
 
 [build.environment]
   NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"   # ← ИЗМЕНЕНО: /index.html вместо /index.php
+  to = "/index.html"
   status = 200
 
 [[headers]]
-  for = "/*"
+  for = "/build/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
