@@ -241,7 +241,7 @@ export default {
                     const baseUrl = 'https://uxtjoywjdihkxqzjhsgg.supabase.co/storage/v1/object/public/product-images/'
                     
                     if (images && images.length > 0) {
-                        this.productImages = images.map(img => baseUrl + img.image_url + '?width=600')
+this.productImages = images.map(img => baseUrl + img.image_url)
                     } else if (data.image_url) {
                         this.productImages = [data.image_url]
                     } else {
