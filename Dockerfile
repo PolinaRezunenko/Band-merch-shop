@@ -26,7 +26,7 @@ COPY . .
 
 RUN cp .env.example .env
 RUN composer install --no-dev --optimize-autoloader
-RUN npm ci && npm run build
+RUN npm install && npm run build
 RUN php artisan key:generate
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
